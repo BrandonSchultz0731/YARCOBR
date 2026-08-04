@@ -1,13 +1,16 @@
 name: Update Report Index
 
 # Runs automatically whenever a file in /reports is added, renamed, or removed.
-# No one needs to trigger this manually — uploading a correctly named PDF
-# through the GitHub website is enough.
+# No one needs to trigger this manually for normal use — uploading a
+# correctly named PDF through the GitHub website is enough. workflow_dispatch
+# below adds a manual "Run workflow" button in the Actions tab, useful for
+# edge cases like recovering from a force-push (see repo README).
 on:
   push:
     branches: [main]
     paths:
-      - 'reports/**'
+      - "reports/**"
+  workflow_dispatch:
 
 permissions:
   contents: write
