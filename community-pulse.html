@@ -1,9 +1,18 @@
+<!--
+  MONTHLY WORKFLOW NOTE: unlike /reports, the numbers, charts, and takeaways
+  on this page are NOT automated — survey.json only drives the page title
+  and the badge date range shown near the top (via /survey/YYYY-MM.pdf
+  uploads, same pattern as reports). The actual stats, donut percentages,
+  key takeaways, and AI summary below need to be edited by hand each time a
+  new survey closes. Search this file for "July 2026" / the numbers to find
+  what to update.
+-->
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Community Pulse — YARCOBR</title>
+    <title>Community Pulse — LiveYARCOBR</title>
     <meta
       name="description"
       content="Resident survey results for the Yacht &amp; Racquet Club of Boca Raton community."
@@ -15,19 +24,46 @@
 
     <div class="page-header">
       <div class="container">
-        <h1>Community Pulse</h1>
-        <p>
-          Thank you to everyone who participated in our July survey. Your
-          feedback helps shape our community.
-        </p>
+        <div class="page-header-flex">
+          <div>
+            <h1>Community Pulse</h1>
+            <p>
+              Thank you to everyone who participated in our July 2026 survey.
+              Your feedback helps shape our community.
+            </p>
+          </div>
+          <div class="survey-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <rect
+                x="3"
+                y="5"
+                width="18"
+                height="16"
+                rx="2"
+                stroke="currentColor"
+                stroke-width="1.6"
+              />
+              <path
+                d="M3 10h18M8 3v4M16 3v4"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span
+              ><span class="label">Survey Period</span>July 1 – July 21,
+              2026</span
+            >
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="container section">
       <div class="stat-row">
         <div class="stat">
-          <div class="stat-number">142</div>
-          <div class="stat-label">Responses</div>
+          <div class="stat-number">27</div>
+          <div class="stat-label">Residents Participated</div>
         </div>
         <div class="stat">
           <div class="stat-number">78%</div>
@@ -35,43 +71,246 @@
         </div>
         <div class="stat">
           <div class="stat-number">100%</div>
-          <div class="stat-label">Anonymous</div>
+          <div class="stat-label">Anonymous Responses</div>
         </div>
       </div>
 
-      <h2>Key Community Insights</h2>
-      <ul class="insight-list">
-        <li>
-          <span class="tick">✓</span> Construction noise and scheduling remain
-          top of mind
-        </li>
-        <li>
-          <span class="tick">✓</span> Gym equipment upgrades are a priority
-        </li>
-        <li>
-          <span class="tick">✓</span> Strong support for enhanced beach
-          amenities
-        </li>
-        <li>
-          <span class="tick">✓</span> Desire for more social events and
-          activities
-        </li>
-      </ul>
+      <h2>Community Snapshot</h2>
+      <div class="snapshot-grid">
+        <div class="snapshot-card">
+          <h4>Years Living at YARCOBR</h4>
+          <div
+            class="donut"
+            style="
+              --donut-stops:
+                var(--chart-a) 0% 37%, var(--chart-b) 37% 52%,
+                var(--chart-c) 52% 93%, var(--chart-d) 93% 100%;
+            "
+          ></div>
+          <ul class="donut-legend">
+            <li>
+              <span class="swatch" style="background: var(--chart-a)"></span>1 –
+              5 Years&nbsp;<strong style="margin-left: auto">37%</strong>
+            </li>
+            <li>
+              <span class="swatch" style="background: var(--chart-b)"></span>6 –
+              11 Years&nbsp;<strong style="margin-left: auto">15%</strong>
+            </li>
+            <li>
+              <span class="swatch" style="background: var(--chart-c)"></span>11
+              – 20 Years&nbsp;<strong style="margin-left: auto">41%</strong>
+            </li>
+            <li>
+              <span class="swatch" style="background: var(--chart-d)"></span
+              >More than 20 Years&nbsp;<strong style="margin-left: auto"
+                >7%</strong
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="snapshot-card">
+          <h4>Residency</h4>
+          <div
+            class="donut"
+            style="
+              --donut-stops:
+                var(--chart-a) 0% 41%, var(--chart-b) 41% 82%,
+                var(--chart-c) 82% 100%;
+            "
+          ></div>
+          <ul class="donut-legend">
+            <li>
+              <span class="swatch" style="background: var(--chart-a)"></span
+              >Full-Time&nbsp;<strong style="margin-left: auto">41%</strong>
+            </li>
+            <li>
+              <span class="swatch" style="background: var(--chart-b)"></span
+              >Seasonal (6+ months)&nbsp;<strong style="margin-left: auto"
+                >41%</strong
+              >
+            </li>
+            <li>
+              <span class="swatch" style="background: var(--chart-c)"></span
+              >Part-Time&nbsp;<strong style="margin-left: auto">18%</strong>
+            </li>
+          </ul>
+        </div>
+        <div class="snapshot-card">
+          <h4>Age Range</h4>
+          <div
+            class="donut"
+            style="
+              --donut-stops:
+                var(--chart-a) 0% 7%, var(--chart-b) 7% 48%,
+                var(--chart-c) 48% 70%, var(--chart-d) 70% 100%;
+            "
+          ></div>
+          <ul class="donut-legend">
+            <li>
+              <span class="swatch" style="background: var(--chart-a)"></span>50
+              – 59&nbsp;<strong style="margin-left: auto">7%</strong>
+            </li>
+            <li>
+              <span class="swatch" style="background: var(--chart-b)"></span>60
+              – 69&nbsp;<strong style="margin-left: auto">41%</strong>
+            </li>
+            <li>
+              <span class="swatch" style="background: var(--chart-c)"></span>70
+              – 79&nbsp;<strong style="margin-left: auto">22%</strong>
+            </li>
+            <li>
+              <span class="swatch" style="background: var(--chart-d)"></span
+              >Over 80&nbsp;<strong style="margin-left: auto">30%</strong>
+            </li>
+          </ul>
+        </div>
+      </div>
 
-      <div class="actions">
+      <div class="two-col-even">
+        <div class="panel" style="display: block">
+          <h3>💡 Key Takeaways</h3>
+          <ul class="insight-list">
+            <li>
+              <span class="tick">✓</span> Residents love the waterfront
+              lifestyle, private beach, marina, and tropical setting.
+            </li>
+            <li>
+              <span class="tick">✓</span> Strong sense of community is the top
+              reason residents chose YARCOBR.
+            </li>
+            <li>
+              <span class="tick">✓</span> The Chickee Bar is a favorite amenity
+              and gathering place.
+            </li>
+            <li>
+              <span class="tick">✓</span> Top priorities include enhancing
+              dining options, modernizing common areas, and limiting major
+              renovations during peak season.
+            </li>
+            <li>
+              <span class="tick">✓</span> Residents value improved
+              communication, guide amenities, and social events.
+            </li>
+          </ul>
+          <a href="survey/2026-07-survey-results.pdf" class="btn btn-primary"
+            >View Full Survey Results →</a
+          >
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-header">
+            <span class="emoji">🍹</span>
+            <h3>Chickee Bar: A Community Favorite</h3>
+          </div>
+          <div class="highlight-body">
+            <img
+              src="assets/chickee-bar.jpg"
+              alt="Chickee Bar"
+              onerror="this.remove()"
+            />
+            <div class="highlight-text">
+              <p>Nearly half of all respondents visit the Chickee Bar</p>
+              <div class="big-stat">2–3</div>
+              <p
+                style="
+                  font-size: 0.95rem;
+                  font-weight: 600;
+                  color: var(--color-ink);
+                "
+              >
+                times every week
+              </p>
+              <p style="font-size: 0.82rem">
+                reinforcing its importance as one of YARCOBR's most valued
+                community amenities.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-summary">
+        <div class="ai-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <rect
+              x="4"
+              y="4"
+              width="16"
+              height="16"
+              rx="3"
+              stroke="currentColor"
+              stroke-width="1.6"
+            />
+            <path
+              d="M9 9h.01M15 9h.01M8 15c1 1.2 2.4 2 4 2s3-.8 4-2"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+        <div>
+          <h3 style="font-size: 1rem; margin-bottom: 10px">
+            AI Community Summary
+          </h3>
+          <p>
+            Residents overwhelmingly value what makes YARCOBR unique — its
+            waterfront lifestyle, private beach, marina, tropical setting, and
+            strong sense of community. Many respondents described the community
+            itself as the primary reason they chose to purchase here.
+          </p>
+          <p>
+            The most frequently mentioned suggestions include enhancing the
+            Chickee Bar dining experience, modernizing common areas, expanding
+            guest amenities such as showers and lockers, and continuing to
+            improve communication between residents, management, and the Board.
+          </p>
+          <p>
+            Overall, the survey reflects a community that is proud of where it
+            lives and eager to see thoughtful investments that preserve
+            YARCOBR's unique character while enhancing the resident experience.
+          </p>
+        </div>
+      </div>
+
+      <div class="actions" style="justify-content: center">
         <a
           href="survey/2026-07-survey-results.pdf"
           class="btn btn-primary"
-          id="view-full-results"
-          >View Full Survey Results →</a
-        >
-        <a
-          href="survey/2026-07-survey-results.pdf"
-          class="btn btn-secondary"
           download
-          >⬇ Download Survey Report</a
+          >⬇ Download Survey Report (PDF)</a
         >
+        <button type="button" class="btn btn-secondary" id="share-results-btn">
+          ↩ Share This Results
+        </button>
       </div>
+
+      <p class="privacy-note">
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          style="display: inline"
+        >
+          <rect
+            x="5"
+            y="11"
+            width="14"
+            height="9"
+            rx="2"
+            stroke="currentColor"
+            stroke-width="1.6"
+          />
+          <path
+            d="M8 11V7a4 4 0 0 1 8 0v4"
+            stroke="currentColor"
+            stroke-width="1.6"
+          />
+        </svg>
+        Community Pulse™ is intended to provide residents with anonymous
+        insights into our community. All responses are anonymous — individual
+        responses are never published or attributed.
+      </p>
     </div>
 
     <div id="site-footer"></div>
@@ -80,6 +319,20 @@
     <script>
       renderHeader("pulse");
       renderFooter();
+
+      document
+        .getElementById("share-results-btn")
+        .addEventListener("click", function () {
+          const url = window.location.href;
+          navigator.clipboard
+            .writeText(url)
+            .then(function () {
+              alert("Link copied to clipboard!\n" + url);
+            })
+            .catch(function () {
+              alert("Here is the link to share:\n" + url);
+            });
+        });
     </script>
   </body>
 </html>

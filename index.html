@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YARCOBR Market Reports — Local Insight, Trusted Guidance</title>
+    <title>LiveYARCOBR — Local Insight, Trusted Guidance</title>
     <meta
       name="description"
       content="Monthly real estate market reports and community insights for the residents of Yacht &amp; Racquet Club of Boca Raton."
@@ -132,15 +132,15 @@
         <div class="panel" id="latest-report-panel">
           <div class="thumb"><span>YARCOBR</span></div>
           <div>
-            <h3>Latest Market Report</h3>
+            <h3>Current Market Report</h3>
             <p>Loading…</p>
           </div>
         </div>
-        <div class="panel">
-          <div class="thumb"><span>PULSE</span><span>JULY 2026</span></div>
+        <div class="panel" id="latest-survey-panel">
+          <div class="thumb"><span>PULSE</span></div>
           <div>
             <h3>Community Pulse</h3>
-            <p>July 2026 survey — see what your neighbors are saying.</p>
+            <p>Loading…</p>
             <div class="panel-actions">
               <a href="community-pulse.html" class="btn btn-primary"
                 >View Results →</a
@@ -154,10 +154,30 @@
     <div id="site-footer"></div>
 
     <script src="js/reports-loader.js"></script>
+    <script src="js/survey-loader.js"></script>
     <script src="js/components.js"></script>
     <script>
       renderHeader("home");
       renderFooter();
+
+      loadSurveys().then(function (surveys) {
+        const panel = document.getElementById("latest-survey-panel");
+        if (!surveys.length) {
+          panel.querySelector(".thumb").innerHTML = "<span>PULSE</span>";
+          panel.querySelector("p").textContent =
+            "No survey results have been published yet.";
+          return;
+        }
+        const latest = surveys[0];
+        panel.querySelector(".thumb").innerHTML =
+          "<span>PULSE</span><span>" + latest.title.toUpperCase() + "</span>";
+        panel.querySelector("h3").textContent =
+          "Community Pulse — " + latest.title;
+        panel.querySelector("p").textContent =
+          "See what your neighbors are saying in the " +
+          latest.title +
+          " survey.";
+      });
 
       loadReports().then(function (reports) {
         const heroActions = document.getElementById("hero-actions");

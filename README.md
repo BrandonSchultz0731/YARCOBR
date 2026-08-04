@@ -8,19 +8,42 @@ automatically. See below.
 
 ```
 index.html                          Home page
-market-reports.html                 Archive of all reports (auto-generated)
+market-reports.html                 Archive of all reports (auto-generated, with sort + search)
 report.html                         Individual report page — reads ?month=2026-08 from the URL
-community-pulse.html                Survey results
-about.html                          About Daniel & Matt + Contact (#contact section)
+community-pulse.html                Survey results (see note below — only partly automated)
+about.html                          About Us page
+contact.html                        Contact Us page (separate from About as of this update)
 styles.css                          Every page's colors, fonts, and component styles
 js/components.js                    Shared header/nav + footer, injected into every page
 js/reports-loader.js                Fetches reports.json and provides lookup helpers
-reports.json                        Auto-generated. Do not edit by hand — see below.
+js/survey-loader.js                 Fetches survey.json (title/period only — see note below)
+reports.json / survey.json          Auto-generated. Do not edit by hand — see below.
 reports/                            Monthly report PDFs. Non-technical admins work here.
-survey/                             Survey result PDFs
+survey/                             Survey result PDFs — same YYYY-MM.pdf convention as /reports
+assets/                             Drop daniel.jpg, matt.jpg, chickee-bar.jpg here (see assets/README.md)
 scripts/generate-reports-json.js    Builds reports.json from whatever is in /reports
-.github/workflows/update-report-index.yml   Runs the script above automatically
+scripts/generate-survey-json.js     Builds survey.json from whatever is in /survey
+.github/workflows/update-report-index.yml   Runs both scripts above automatically
 ```
+
+### Important: Community Pulse automation is partial
+
+Uploading a PDF to `/survey` (named `YYYY-MM.pdf`) automatically updates the
+**title/period label** shown on the home page's Community Pulse panel — same
+mechanism as reports. It does **not** automatically update the actual stats,
+donut chart percentages, key takeaways, or AI summary on
+`community-pulse.html` — those are specific numbers from each survey that
+can't be derived from a filename. Whoever compiles the survey results still
+needs to edit those directly in `community-pulse.html` each cycle (there's a
+comment at the top of that file marking what to update).
+
+### Contact form
+
+The "Send Us a Message" form on `contact.html` has no backend (GitHub Pages
+is static and can't run one) — submitting it opens the visitor's email
+client with a pre-filled message to Daniel, rather than silently sending
+in the background. This means it only works smoothly for visitors who have
+an email client configured on their device.
 
 ## How new reports get published (fully automatic)
 
@@ -50,6 +73,22 @@ For the Action to be able to commit `reports.json` back to the repo:
 **Settings → Actions → General → Workflow permissions → set to "Read and
 write permissions"**, then Save. Without this, the Action will run but fail
 to push the update.
+
+### Manual trigger
+
+The workflow includes `workflow_dispatch`, which adds a **Run workflow**
+button: Actions tab → "Update Report Index" → Run workflow. Normal uploads
+never need this — it's there for edge cases like the one below.
+
+### Edge case: force-pushing backward
+
+If you force-push `main` back to an older commit (rather than adding a new
+commit), GitHub doesn't register any new commits in that push, so the
+`paths: reports/**` trigger has nothing to evaluate and won't fire —
+`reports.json` will be left stale, out of sync with the actual PDFs in
+`/reports`. If this happens, use **Run workflow** (above) to force a fresh
+regeneration. Prefer making a real forward commit over force-pushing
+backward when possible — normal commits always trigger correctly.
 
 ## The link to use in Mailchimp
 

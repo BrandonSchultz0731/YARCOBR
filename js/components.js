@@ -22,8 +22,8 @@ const NAV_LINKS = [
   { key: "home", label: "Home", href: "index.html" },
   { key: "reports", label: "Market Reports", href: "market-reports.html" },
   { key: "pulse", label: "Community Pulse", href: "community-pulse.html" },
-  { key: "about", label: "About", href: "about.html" },
-  { key: "contact", label: "Contact", href: "about.html#contact" },
+  { key: "about", label: "About Us", href: "about.html" },
+  { key: "contact", label: "Contact Us", href: "contact.html" },
 ];
 
 function renderHeader(activeKey, options) {
@@ -42,8 +42,8 @@ function renderHeader(activeKey, options) {
         <a href="index.html" class="brand">
           <span style="color: var(--color-navy);">${SAILBOAT_ICON}</span>
           <span class="brand-text">
-            <span class="brand-name">YARCOBR</span>
-            <span class="brand-sub">Market Reports</span>
+            <span class="brand-name">LiveYARCOBR</span>
+            <span class="brand-sub">Market Reports · Community Pulse · Real Estate</span>
           </span>
         </a>
         <nav class="main-nav" id="main-nav">${links}</nav>
@@ -75,16 +75,20 @@ function renderFooter() {
         <a href="index.html" class="brand">
           <span style="color: var(--color-white);">${SAILBOAT_ICON}</span>
           <span class="brand-text">
-            <span class="brand-name">YARCOBR Market Reports</span>
+            <span class="brand-name">LiveYARCOBR</span>
           </span>
         </a>
         <nav class="footer-nav">
           <a href="index.html">Home</a>
           <a href="market-reports.html">Market Reports</a>
           <a href="community-pulse.html">Community Pulse</a>
-          <a href="about.html">About</a>
-          <a href="about.html#contact">Contact</a>
+          <a href="about.html">About Us</a>
+          <a href="contact.html">Contact Us</a>
         </nav>
+      </div>
+      <div class="footer-disclaimer">
+        <span>An independent community resource created by YARCOBR residents Daniel Schultz &amp; Matt Gelling. Not affiliated with or endorsed by the Yacht &amp; Racquet Club of Boca Raton Association.</span>
+        <span>© ${year} LiveYARCOBR. All rights reserved.</span>
       </div>
     </footer>
   `;
