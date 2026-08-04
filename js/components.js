@@ -19,22 +19,22 @@ const SAILBOAT_ICON = `
 </svg>`;
 
 const NAV_LINKS = [
-  { key: 'home', label: 'Home', href: 'index.html' },
-  { key: 'reports', label: 'Market Reports', href: 'market-reports.html' },
-  { key: 'pulse', label: 'Community Pulse', href: 'community-pulse.html' },
-  { key: 'about', label: 'About', href: 'about.html' },
-  { key: 'contact', label: 'Contact', href: 'about.html#contact' },
+  { key: "home", label: "Home", href: "index.html" },
+  { key: "reports", label: "Market Reports", href: "market-reports.html" },
+  { key: "pulse", label: "Community Pulse", href: "community-pulse.html" },
+  { key: "about", label: "About", href: "about.html" },
+  { key: "contact", label: "Contact", href: "about.html#contact" },
 ];
 
 function renderHeader(activeKey, options) {
-  const mount = document.getElementById('site-header');
+  const mount = document.getElementById("site-header");
   if (!mount) return;
   const dark = options && options.dark;
 
   const links = NAV_LINKS.map(function (link) {
-    const activeClass = link.key === activeKey ? ' active' : '';
+    const activeClass = link.key === activeKey ? " active" : "";
     return `<a href="${link.href}" class="${activeClass.trim()}">${link.label}</a>`;
-  }).join('');
+  }).join("");
 
   mount.innerHTML = `
     <header class="site-header">
@@ -54,18 +54,18 @@ function renderHeader(activeKey, options) {
     </header>
   `;
 
-  const toggle = document.getElementById('nav-toggle');
-  const nav = document.getElementById('main-nav');
+  const toggle = document.getElementById("nav-toggle");
+  const nav = document.getElementById("main-nav");
   if (toggle && nav) {
-    toggle.addEventListener('click', function () {
-      const isOpen = nav.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', String(isOpen));
+    toggle.addEventListener("click", function () {
+      const isOpen = nav.classList.toggle("open");
+      toggle.setAttribute("aria-expanded", String(isOpen));
     });
   }
 }
 
 function renderFooter() {
-  const mount = document.getElementById('site-footer');
+  const mount = document.getElementById("site-footer");
   if (!mount) return;
   const year = new Date().getFullYear();
 
