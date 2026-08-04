@@ -1,0 +1,29 @@
+name: Update Report Index
+
+# Runs automatically whenever a file in /reports is added, renamed, or removed.
+# No one needs to trigger this manually — uploading a correctly named PDF
+# through the GitHub website is enough.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'reports/**'
+
+permissions:
+  contents: write
+
+jobs:
+  build-index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Generate reports.json from /reports folder
+        run: node scripts/generate-reports-json.js
+
+      - name: Commit updated reports.json (if changed)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto-update reports.json"
+          file_pattern: reports.json

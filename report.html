@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Market Report — YARCOBR</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="site-header"></div>
+
+    <div class="page-header">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html">Home</a> /
+          <a href="market-reports.html">Market Reports</a> /
+          <span id="crumb-current">Report</span>
+        </div>
+        <div id="report-content"></div>
+      </div>
+    </div>
+
+    <div class="container section" id="report-body"></div>
+
+    <div id="site-footer"></div>
+
+    <script src="js/reports-loader.js"></script>
+    <script src="js/components.js"></script>
+    <script>
+      renderHeader("reports");
+      renderFooter();
+
+      const headerMount = document.getElementById("report-content");
+      const bodyMount = document.getElementById("report-body");
+
+      loadReports().then(function (reports) {
+        const params = new URLSearchParams(window.location.search);
+        const slug = params.get("month");
+        const report = slug ? findReport(reports, slug) : reports[0];
+
+        if (!report) {
+          document.getElementById("crumb-current").textContent = "Not found";
+          headerMount.innerHTML = `<h1>Report not found</h1><p>We couldn't find that report.</p>`;
+          bodyMount.innerHTML = `
+        <div class="notice">
+          <p>The report you're looking for may have been moved or the link is incorrect.</p>
+          <a href="market-reports.html" class="btn btn-primary">Browse All Reports</a>
+        </div>
+      `;
+          return;
+        }
+
+        document.title = report.title + " Market Report — YARCOBR";
+        document.getElementById("crumb-current").textContent = report.title;
+
+        headerMount.innerHTML = `
+      <div class="report-hero">
+        <div class="cover-large">
+          <span class="cover-brand">YARCOBR</span>
+          <span class="cover-sub">Market Report</span>
+          <span class="cover-month">${report.title}</span>
+        </div>
+        <div>
+          <h1>${report.title} Market Report</h1>
+          <p>${report.excerpt}</p>
+          <div class="actions" style="margin-top:16px;">
+            <a href="${report.pdf}" class="btn btn-primary" download>⬇ Download PDF</a>
+            <a href="market-reports.html" class="btn btn-secondary">← Back to All Reports</a>
+          </div>
+        </div>
+      </div>
+    `;
+
+        const adjacent = getAdjacent(reports, report.slug);
+        const newerLink = adjacent.newer
+          ? `<a href="report.html?month=${adjacent.newer.slug}">${adjacent.newer.title} →</a>`
+          : `<span class="disabled">Newest report</span>`;
+        const olderLink = adjacent.older
+          ? `<a href="report.html?month=${adjacent.older.slug}">← ${adjacent.older.title}</a>`
+          : `<span class="disabled">Oldest report</span>`;
+
+        bodyMount.innerHTML = `
+      <embed src="${report.pdf}" type="application/pdf" class="pdf-frame" />
+      <div class="report-nav">
+        ${olderLink}
+        ${newerLink}
+      </div>
+    `;
+      });
+    </script>
+  </body>
+</html>

@@ -1,10 +1,200 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
-    <title>Market Reports</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YARCOBR Market Reports — Local Insight, Trusted Guidance</title>
+    <meta
+      name="description"
+      content="Monthly real estate market reports and community insights for the residents of Yacht &amp; Racquet Club of Boca Raton."
+    />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Monthly Market Reports</h1>
-    <p>Coming soon.</p>
+    <div id="site-header"></div>
+
+    <section class="hero">
+      <div class="container">
+        <h1>Local Insight.<br />Trusted Guidance.</h1>
+        <p class="lead">
+          Monthly market updates, community insights, and real estate expertise
+          for the residents of the Yacht &amp; Racquet Club of Boca Raton.
+        </p>
+        <div class="actions" id="hero-actions">
+          <a
+            href="market-reports.html"
+            class="btn btn-secondary"
+            style="
+              background: transparent;
+              border-color: rgba(255, 255, 255, 0.5);
+              color: #fff;
+            "
+            >View All Market Reports →</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <div class="feature-strip">
+        <div class="feature">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 20V10M11 20V4M18 20v-7"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <h3>Market Intelligence</h3>
+          <p>Up-to-date real estate data and trends specific to YARCOBR.</p>
+        </div>
+        <div class="feature">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <circle
+                cx="9"
+                cy="8"
+                r="3"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <circle
+                cx="17"
+                cy="9"
+                r="2.4"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14.5 14.3c2.6.4 4.5 2.6 4.5 5.2"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <h3>Community Focused</h3>
+          <p>
+            Insights from residents, for residents. Your voice drives our
+            updates.
+          </p>
+        </div>
+        <div class="feature">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect
+                x="5"
+                y="3"
+                width="14"
+                height="18"
+                rx="1.5"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M8 8h8M8 12h8M8 16h5"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <h3>Monthly Reports</h3>
+          <p>
+            Beautifully designed reports with the data that matters most to you.
+          </p>
+        </div>
+        <div class="feature">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <h3>Local Expertise</h3>
+          <p>
+            Daniel Schultz &amp; Matt Gelling — your real estate partners in
+            YARCOBR.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="two-col" style="margin-bottom: 60px">
+        <div class="panel" id="latest-report-panel">
+          <div class="thumb"><span>YARCOBR</span></div>
+          <div>
+            <h3>Latest Market Report</h3>
+            <p>Loading…</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="thumb"><span>PULSE</span><span>JULY 2026</span></div>
+          <div>
+            <h3>Community Pulse</h3>
+            <p>July 2026 survey — see what your neighbors are saying.</p>
+            <div class="panel-actions">
+              <a href="community-pulse.html" class="btn btn-primary"
+                >View Results →</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="site-footer"></div>
+
+    <script src="js/reports-loader.js"></script>
+    <script src="js/components.js"></script>
+    <script>
+      renderHeader("home");
+      renderFooter();
+
+      loadReports().then(function (reports) {
+        const heroActions = document.getElementById("hero-actions");
+        const panel = document.getElementById("latest-report-panel");
+
+        if (!reports.length) {
+          panel.querySelector(".thumb").innerHTML = "<span>YARCOBR</span>";
+          panel.querySelector("h3").nextElementSibling.textContent =
+            "No reports have been published yet.";
+          return;
+        }
+
+        const latest = reports[0];
+
+        // Hero "View latest report" button
+        const heroBtn = document.createElement("a");
+        heroBtn.href = "report.html?month=" + latest.slug;
+        heroBtn.className = "btn btn-gold";
+        heroBtn.textContent = "View " + latest.title + " Market Report →";
+        heroActions.prepend(heroBtn);
+
+        // Latest report panel
+        panel.querySelector(".thumb").innerHTML =
+          "<span>YARCOBR</span><span>" + latest.title.toUpperCase() + "</span>";
+        panel.querySelector("p").textContent =
+          latest.title + " — " + latest.excerpt;
+        const actions = document.createElement("div");
+        actions.className = "panel-actions";
+        actions.innerHTML =
+          '<a href="report.html?month=' +
+          latest.slug +
+          '" class="btn btn-primary">View Report Online</a>' +
+          '<a href="' +
+          latest.pdf +
+          '" class="btn btn-secondary" download>Download PDF</a>';
+        panel.querySelector("div:last-child").appendChild(actions);
+      });
+    </script>
   </body>
 </html>
