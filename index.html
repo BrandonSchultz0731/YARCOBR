@@ -20,10 +20,7 @@
           Monthly market updates, community insights, and real estate expertise
           for the residents of the Yacht &amp; Racquet Club of Boca Raton.
         </p>
-        <div class="actions">
-          <a href="report.html?month=2026-08" class="btn btn-gold"
-            >View August 2026 Market Report →</a
-          >
+        <div class="actions" id="hero-actions">
           <a
             href="market-reports.html"
             class="btn btn-secondary"
@@ -132,22 +129,11 @@
 
     <div class="container">
       <div class="two-col" style="margin-bottom: 60px">
-        <div class="panel">
-          <div class="thumb"><span>YARCOBR</span><span>AUGUST 2026</span></div>
+        <div class="panel" id="latest-report-panel">
+          <div class="thumb"><span>YARCOBR</span></div>
           <div>
             <h3>Latest Market Report</h3>
-            <p>
-              August 2026 — comprehensive analysis of YARCOBR real estate
-              activity, trends, and community insights.
-            </p>
-            <div class="panel-actions">
-              <a href="report.html?month=2026-08" class="btn btn-primary"
-                >View Report Online</a
-              >
-              <a href="reports/2026-08.pdf" class="btn btn-secondary" download
-                >Download PDF</a
-              >
-            </div>
+            <p>Loading…</p>
           </div>
         </div>
         <div class="panel">
@@ -167,10 +153,48 @@
 
     <div id="site-footer"></div>
 
+    <script src="js/reports-loader.js"></script>
     <script src="js/components.js"></script>
     <script>
       renderHeader("home");
       renderFooter();
+
+      loadReports().then(function (reports) {
+        const heroActions = document.getElementById("hero-actions");
+        const panel = document.getElementById("latest-report-panel");
+
+        if (!reports.length) {
+          panel.querySelector(".thumb").innerHTML = "<span>YARCOBR</span>";
+          panel.querySelector("h3").nextElementSibling.textContent =
+            "No reports have been published yet.";
+          return;
+        }
+
+        const latest = reports[0];
+
+        // Hero "View latest report" button
+        const heroBtn = document.createElement("a");
+        heroBtn.href = "report.html?month=" + latest.slug;
+        heroBtn.className = "btn btn-gold";
+        heroBtn.textContent = "View " + latest.title + " Market Report →";
+        heroActions.prepend(heroBtn);
+
+        // Latest report panel
+        panel.querySelector(".thumb").innerHTML =
+          "<span>YARCOBR</span><span>" + latest.title.toUpperCase() + "</span>";
+        panel.querySelector("p").textContent =
+          latest.title + " — " + latest.excerpt;
+        const actions = document.createElement("div");
+        actions.className = "panel-actions";
+        actions.innerHTML =
+          '<a href="report.html?month=' +
+          latest.slug +
+          '" class="btn btn-primary">View Report Online</a>' +
+          '<a href="' +
+          latest.pdf +
+          '" class="btn btn-secondary" download>Download PDF</a>';
+        panel.querySelector("div:last-child").appendChild(actions);
+      });
     </script>
   </body>
 </html>
