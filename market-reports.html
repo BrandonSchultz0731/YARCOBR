@@ -1,80 +1,100 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Market Reports Archive — YARCOBR</title>
-<meta name="description" content="Browse the full archive of monthly YARCOBR market reports.">
-<link rel="stylesheet" href="styles.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Market Reports Archive — YARCOBR</title>
+    <meta
+      name="description"
+      content="Browse the full archive of monthly YARCOBR market reports."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="site-header"></div>
 
-<div id="site-header"></div>
-
-<div class="page-header">
-  <div class="container">
-    <h1>Market Reports</h1>
-    <p>Browse our archive of monthly market reports.</p>
-  </div>
-</div>
-
-<div class="container section">
-  <div class="list-controls" id="list-controls" style="display:none;">
-    <input type="search" class="search-input" id="search-input" placeholder="Search reports (e.g. &quot;August&quot; or &quot;2026&quot;)">
-    <div>
-      <label for="sort-select">Sort by:</label>
-      <select id="sort-select">
-        <option value="newest">Newest First</option>
-        <option value="oldest">Oldest First</option>
-      </select>
+    <div class="page-header">
+      <div class="container">
+        <h1>Market Reports</h1>
+        <p>Browse our archive of monthly market reports.</p>
+      </div>
     </div>
-  </div>
-  <div class="card-grid" id="report-grid"></div>
-  <p id="empty-state" style="display:none; text-align:center; color: var(--color-ink-muted);">No reports have been published yet — check back soon.</p>
-  <p id="no-match-state" style="display:none; text-align:center; color: var(--color-ink-muted);">No reports match your search.</p>
-</div>
 
-<div id="site-footer"></div>
+    <div class="container section">
+      <div class="list-controls" id="list-controls" style="display: none">
+        <input
+          type="search"
+          class="search-input"
+          id="search-input"
+          placeholder='Search reports (e.g. "August" or "2026")'
+        />
+        <div>
+          <label for="sort-select">Sort by:</label>
+          <select id="sort-select">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-grid" id="report-grid"></div>
+      <p
+        id="empty-state"
+        style="display: none; text-align: center; color: var(--color-ink-muted)"
+      >
+        No reports have been published yet — check back soon.
+      </p>
+      <p
+        id="no-match-state"
+        style="display: none; text-align: center; color: var(--color-ink-muted)"
+      >
+        No reports match your search.
+      </p>
+    </div>
 
-<script src="js/reports-loader.js"></script>
-<script src="js/components.js"></script>
-<script>
-  renderHeader('reports');
-  renderFooter();
+    <div id="site-footer"></div>
 
-  loadReports().then(function (reports) {
-    const grid = document.getElementById('report-grid');
-    const emptyState = document.getElementById('empty-state');
-    const noMatchState = document.getElementById('no-match-state');
-    const controls = document.getElementById('list-controls');
-    const searchInput = document.getElementById('search-input');
-    const sortSelect = document.getElementById('sort-select');
+    <script src="js/reports-loader.js"></script>
+    <script src="js/components.js"></script>
+    <script>
+      renderHeader("reports");
+      renderFooter();
 
-    if (!reports.length) {
-      emptyState.style.display = 'block';
-      return;
-    }
+      loadReports().then(function (reports) {
+        const grid = document.getElementById("report-grid");
+        const emptyState = document.getElementById("empty-state");
+        const noMatchState = document.getElementById("no-match-state");
+        const controls = document.getElementById("list-controls");
+        const searchInput = document.getElementById("search-input");
+        const sortSelect = document.getElementById("sort-select");
 
-    controls.style.display = 'flex';
+        if (!reports.length) {
+          emptyState.style.display = "block";
+          return;
+        }
 
-    function render() {
-      const query = searchInput.value.trim().toLowerCase();
-      let list = reports.filter(function (r) {
-        return r.title.toLowerCase().includes(query) || r.slug.includes(query);
-      });
+        controls.style.display = "flex";
 
-      // reports[] arrives newest-first from reports.json; reverse for oldest-first
-      if (sortSelect.value === 'oldest') list = list.slice().reverse();
+        function render() {
+          const query = searchInput.value.trim().toLowerCase();
+          let list = reports.filter(function (r) {
+            return (
+              r.title.toLowerCase().includes(query) || r.slug.includes(query)
+            );
+          });
 
-      if (!list.length) {
-        grid.innerHTML = '';
-        noMatchState.style.display = 'block';
-        return;
-      }
-      noMatchState.style.display = 'none';
+          // reports[] arrives newest-first from reports.json; reverse for oldest-first
+          if (sortSelect.value === "oldest") list = list.slice().reverse();
 
-      grid.innerHTML = list.map(function (r) {
-        return `
+          if (!list.length) {
+            grid.innerHTML = "";
+            noMatchState.style.display = "block";
+            return;
+          }
+          noMatchState.style.display = "none";
+
+          grid.innerHTML = list
+            .map(function (r) {
+              return `
           <div class="report-card">
             <div class="report-cover">
               <span class="cover-brand">YARCOBR</span>
@@ -91,13 +111,14 @@
             </div>
           </div>
         `;
-      }).join('');
-    }
+            })
+            .join("");
+        }
 
-    searchInput.addEventListener('input', render);
-    sortSelect.addEventListener('change', render);
-    render();
-  });
-</script>
-</body>
+        searchInput.addEventListener("input", render);
+        sortSelect.addEventListener("change", render);
+        render();
+      });
+    </script>
+  </body>
 </html>
