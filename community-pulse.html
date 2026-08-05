@@ -213,33 +213,36 @@
           </a>
         </div>
         <div class="highlight-card">
-          <div class="highlight-header">
-            <span class="emoji">🍹</span>
-            <h3>Chickee Bar: A Community Favorite</h3>
-          </div>
-          <div class="highlight-body">
+          <div class="highlight-media">
             <img
               src="assets/chickee-bar.jpg"
-              alt="Chickee Bar"
-              onerror="this.remove()"
+              alt="The Chickee Bar at YARCOBR"
+              onerror="this.closest('.highlight-media').remove()"
             />
-            <div class="highlight-text">
-              <p>Nearly half of all respondents visit the Chickee Bar</p>
-              <div class="big-stat">2–3</div>
-              <p
-                style="
-                  font-size: 0.95rem;
-                  font-weight: 600;
-                  color: var(--color-ink);
-                "
-              >
-                times every week
-              </p>
-              <p style="font-size: 0.82rem">
-                reinforcing its importance as one of YARCOBR's most valued
-                community amenities.
-              </p>
-            </div>
+          </div>
+          <div class="highlight-content">
+            <h3 class="highlight-title">Chickee Bar</h3>
+
+            <p class="highlight-eyebrow">Visits a week</p>
+            <div class="big-stat">2–3</div>
+
+            <!-- Seven dots = a week. Two filled + one ring = "2 to 3".
+                 Decorative reinforcement of the number above it, so it is
+                 hidden from screen readers rather than read out as a list. -->
+            <ul class="week-rhythm" aria-hidden="true">
+              <li class="is-on"></li>
+              <li class="is-on"></li>
+              <li class="is-maybe"></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+            </ul>
+
+            <p class="highlight-note">
+              Nearly half of respondents visit this often, making the Chickee
+              Bar one of the amenities residents value most.
+            </p>
           </div>
         </div>
       </div>

@@ -910,60 +910,101 @@ button:focus-visible {
   flex-shrink: 0;
 }
 
-/* ---------------- Highlight card (Chickee Bar style) ---------------- */
+/* ---------------- Highlight card (Chickee Bar style) ----------------
+   Photo fills a flush left column via absolute inset, so the card has no
+   dead space no matter how tall the panel beside it in .two-col-even grows.
+   -------------------------------------------------------------------- */
 .highlight-card {
   background: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 24px;
-}
-.highlight-header {
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 18px;
+  align-items: stretch;
 }
-.highlight-header .emoji {
-  font-size: 1.3rem;
+.highlight-media {
+  position: relative;
+  flex: 0 0 42%;
+  background: var(--color-bg);
 }
-.highlight-header h3 {
-  margin: 0;
-  font-size: 1rem;
-}
-.highlight-body {
-  display: flex;
-  gap: 22px;
-  align-items: center;
-}
-.highlight-body img {
-  width: 160px;
-  height: 210px;
+.highlight-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 10px;
-  flex-shrink: 0;
+  display: block;
 }
-.highlight-text {
+.highlight-content {
   flex: 1;
-  text-align: center;
+  min-width: 0;
+  padding: 26px 26px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-.highlight-text p {
-  font-size: 0.88rem;
+.highlight-title {
+  margin: 0 0 22px;
+  font-size: 1.15rem;
 }
-@media (max-width: 560px) {
-  .highlight-body {
-    flex-direction: column;
-  }
-  .highlight-body img {
-    width: 100%;
-    height: 180px;
-  }
+.highlight-eyebrow {
+  margin: 0 0 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-ink-muted);
 }
 .highlight-card .big-stat {
   font-family: var(--font-heading);
-  font-size: 1.9rem;
-  color: var(--color-gold-dark);
-  font-weight: 700;
-  margin: 6px 0;
+  font-size: clamp(2.6rem, 4.6vw, 3.3rem);
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-navy);
+  margin: 0 0 18px;
+}
+
+/* Seven dots = one week; two filled + one ring = "2 to 3".
+   Fill and outline carry the meaning, not hue alone — the rose accent is
+   too light to pass text contrast, so it never has to. */
+.week-rhythm {
+  display: flex;
+  gap: 7px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+.week-rhythm li {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+}
+.week-rhythm li.is-on {
+  background: var(--color-navy);
+  border-color: var(--color-navy);
+}
+.week-rhythm li.is-maybe {
+  border-color: var(--color-gold-dark);
+}
+.highlight-note {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  max-width: 34ch;
+}
+@media (max-width: 560px) {
+  .highlight-card {
+    flex-direction: column;
+  }
+  .highlight-media {
+    flex: none;
+    height: 190px;
+  }
+  .highlight-content {
+    justify-content: flex-start;
+  }
 }
 .two-col-even {
   display: grid;
