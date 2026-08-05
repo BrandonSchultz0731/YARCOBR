@@ -44,11 +44,33 @@ marking what to update).
 
 ### Contact form
 
-The "Send Us a Message" form on `contact.html` has no backend (GitHub Pages
-is static and can't run one) — submitting it opens the visitor's email
-client with a pre-filled message to Daniel, rather than silently sending
-in the background. This means it only works smoothly for visitors who have
-an email client configured on their device.
+The "Send Us a Message" form on `contact.html` posts to
+[Web3Forms](https://web3forms.com), which emails the submission to Daniel.
+GitHub Pages is static and can't run a backend, so a third-party service is
+what makes the form actually send. It used to open the visitor's email app
+instead, which did nothing at all on a device with no mail app set up.
+
+Things worth knowing before changing it:
+
+- **The access key in `contact.html` is public on purpose.** It names the
+  destination inbox; it is not a password, and Web3Forms won't let the
+  recipient be overridden in the request.
+- **Changing who receives submissions means a new key.** A key is permanently
+  bound to one email address. Generate another at web3forms.com with the new
+  address and swap the `access_key` value — one line.
+- **Every field needs a `name`.** Web3Forms reads by `name` and ignores `id`,
+  so a field missing one arrives blank _and the submission still reports
+  success_. Add a field, give it a `name`.
+- **The free tier allows 250 submissions a month** and keeps them for 30 days,
+  so the email itself is the only durable record. If it gets spam-filtered the
+  lead is gone.
+- **`botcheck` is a spam honeypot** — a checkbox hidden by CSS that real
+  people never see. Nothing may make it visible.
+- The email buttons and "Copy address" beside them are the deliberate fallback
+  for when the service is down. Keep them.
+
+Because it can fail quietly, Daniel should send himself a test message through
+the form once a quarter. See `docs/contact-form-plan.md`.
 
 ## How new reports get published (fully automatic)
 

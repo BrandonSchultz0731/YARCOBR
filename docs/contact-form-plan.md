@@ -3,9 +3,9 @@
 Working document. Nothing here is built yet — this is the agreed approach and
 the checklist to get there.
 
-**Status:** in progress on `feature/contact-form-web3forms`. Phases 1–3 done;
-Phase 4 (verification) next. Building against Brandon's dev key; the production
-key swap is still outstanding.
+**Status:** built and verified on `feature/contact-form-web3forms`; Phases 1–4
+done. **Blocked on the production key** — the page still carries Brandon's dev
+key and must not merge until that is swapped for one bound to Daniel's email.
 
 ---
 
@@ -172,23 +172,49 @@ Two things learned by probing the live endpoint:
 - [x] Leave the email buttons and Copy address exactly as they are — the
       redundant path if the service is ever down.
 
-## Phase 4 — Verification
+## Phase 4 — Verification ✅
 
-- [ ] Real end-to-end test against the live endpoint; confirm Daniel actually
-      receives it. Not a mock.
-- [ ] Force the failure path with a bad key; confirm the error state renders
+All five run by hand in a real browser against the dev key, all passed.
+
+- [x] Real end-to-end test against the live endpoint; confirm the message
+      actually arrives. Not a mock.
+- [x] Force the failure path with a bad key; confirm the error state renders
       rather than dying silently.
-- [ ] Test with JavaScript disabled (native POST fallback).
-- [ ] Submit with the honeypot filled; confirm rejection.
-- [ ] Mobile check.
+- [x] Test with JavaScript disabled (native POST fallback). Note the header
+      nav and footer are blank in this mode — they are injected by
+      `js/components.js` and vanish site-wide with JavaScript off. Pre-existing,
+      unrelated to the form.
+- [x] Submit with the honeypot filled; confirm rejection. The error panel
+      appearing is the _pass_ here — it proves the honeypot rejection travels
+      the same failure path as everything else.
+- [x] Mobile check (emulated). A real handset still gets checked after deploy,
+      in Phase 5 — the emulator can't show the on-screen keyboard covering the
+      Send button.
+
+Automated alongside these, and worth re-running after any edit to the form:
+60 assertions in the scratchpad checks — markup/payload, the fetch path
+(success, rejection, network failure, unparseable body, triple-submit,
+honeypot), and focus/copy.
 
 ## Phase 5 — Ship
 
-- [ ] Update `README.md` — its "Contact form" section says the form opens the
-      visitor's email client, which becomes wrong.
-- [ ] Commit and push.
+**Order matters here.** The page currently carries Brandon's dev key. Merging
+as-is would put a working form on the live site that delivers residents'
+enquiries to the developer instead of the agent — worse than the broken form
+it replaces, because it looks like it works. Swap the key first.
+
+- [x] Update `README.md` — its "Contact form" section said the form opens the
+      visitor's email client, which is now wrong.
+- [ ] **Generate the production key on Daniel's email and swap the one line.**
+      Blocks the merge.
+- [ ] One real end-to-end submit against the production key, confirmed in
+      Daniel's inbox. A pass on the dev key proves nothing about this one.
+- [ ] Merge to `main` and push.
 - [ ] Live test from liveyarcobr.com after the deploy settles. Assets are
       served with `max-age=600`, so a stale copy can look like a failure.
+- [ ] Real handset check on the live URL (carried over from Phase 4).
+- [ ] Daniel whitelists the sender in Gmail — see Phase 0. Most likely way to
+      lose a message.
 - [ ] Brief Daniel and Matt on what arrives and where.
 
 ## Ongoing
