@@ -222,13 +222,56 @@
             Have a question or need assistance? Fill out the form and we'll get
             back to you as soon as possible.
           </p>
-          <form id="contact-form" onsubmit="return false;">
+          <!-- Posts to Web3Forms, which emails the submission to Daniel. The
+               action and method are real, so the form still works with
+               JavaScript off — the browser just navigates to Web3Forms' own
+               success page instead of staying here.
+
+               Every field needs a `name`. Web3Forms reads submissions by name
+               and ignores `id`, so a missing one arrives blank *and still
+               reports success* — a silent data loss with no error to notice. -->
+          <form
+            id="contact-form"
+            action="https://api.web3forms.com/submit"
+            method="POST"
+          >
+            <!-- Public by design: this key identifies the destination inbox,
+                 it is not a password. Web3Forms will not let the recipient be
+                 overridden in the POST body, so the key cannot be used to
+                 relay mail anywhere else. -->
+            <input
+              type="hidden"
+              name="access_key"
+              value="9bd04844-5eae-48df-ad10-bb9cf5aca0ea"
+            />
+            <input
+              type="hidden"
+              name="from_name"
+              value="LiveYARCOBR Contact Form"
+            />
+
+            <!-- Honeypot. Hidden with CSS rather than type="hidden" because
+                 bots skip inputs the markup declares hidden but fill ones that
+                 look like real fields in the DOM. Web3Forms rejects any
+                 submission where `botcheck` is set. Deliberately not a CAPTCHA:
+                 29.6% of residents are over 80, and that is where they would
+                 give up. -->
+            <input
+              type="checkbox"
+              name="botcheck"
+              class="honeypot"
+              tabindex="-1"
+              autocomplete="off"
+              aria-hidden="true"
+            />
+
             <div class="form-grid">
               <div class="form-field">
                 <label for="name">Name *</label>
                 <input
                   type="text"
                   id="name"
+                  name="name"
                   placeholder="Your full name"
                   required
                 />
@@ -238,6 +281,7 @@
                 <input
                   type="email"
                   id="email"
+                  name="email"
                   placeholder="Your email address"
                   required
                 />
@@ -245,21 +289,51 @@
             </div>
             <div class="form-field">
               <label for="phone">Phone Number</label>
-              <input type="tel" id="phone" placeholder="Your phone number" />
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="Your phone number"
+              />
             </div>
             <div class="form-field">
               <label for="subject">Subject *</label>
-              <select id="subject" required>
-                <option value="general">General Question</option>
-                <option value="showing">Schedule a Showing</option>
-                <option value="valuation">Home Valuation</option>
-                <option value="subscribe">Market Report Subscription</option>
+              <!-- The value becomes the email's subject line verbatim, so it
+                   has to read as one. `data-key` keeps the short slug the
+                   "Other Ways We Can Help" links target, so the wording can
+                   change in one place without breaking them. -->
+              <select id="subject" name="subject" required>
+                <option
+                  data-key="general"
+                  value="YARCOBR Contact — General Question"
+                >
+                  General Question
+                </option>
+                <option
+                  data-key="showing"
+                  value="YARCOBR Contact — Schedule a Showing"
+                >
+                  Schedule a Showing
+                </option>
+                <option
+                  data-key="valuation"
+                  value="YARCOBR Contact — Home Valuation"
+                >
+                  Home Valuation
+                </option>
+                <option
+                  data-key="subscribe"
+                  value="YARCOBR Contact — Market Report Subscription"
+                >
+                  Market Report Subscription
+                </option>
               </select>
             </div>
             <div class="form-field">
               <label for="message">Message *</label>
               <textarea
                 id="message"
+                name="message"
                 placeholder="How can we help you?"
                 required
               ></textarea>
@@ -446,7 +520,12 @@
       document.querySelectorAll(".help-item").forEach(function (link) {
         link.addEventListener("click", function () {
           const select = document.getElementById("subject");
-          select.value = link.dataset.subject;
+          // Match on data-key, not value — the values are full email subject
+          // lines and would have to be duplicated here to compare directly.
+          const option = select.querySelector(
+            '[data-key="' + link.dataset.subject + '"]',
+          );
+          if (option) select.value = option.value;
           setTimeout(function () {
             document.getElementById("name").focus({ preventScroll: true });
           }, 300);

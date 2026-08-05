@@ -1246,6 +1246,12 @@ button:focus-visible {
   resize: vertical;
   min-height: 100px;
 }
+/* Spam honeypot. `display: none` keeps it out of the layout, out of the tab
+   order, and unreadable by screen readers, while leaving it a real checkbox in
+   the DOM for a bot to find and tick. Nothing may ever make this visible. */
+.honeypot {
+  display: none;
+}
 .form-note {
   font-size: 0.78rem;
   color: var(--color-ink-muted);
