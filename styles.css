@@ -251,13 +251,36 @@ button:focus-visible {
   justify-content: center;
 }
 
-/* ---------------- Hero ---------------- */
+/* ---------------- Hero ----------------
+   Three background layers, front to back: a navy scrim, the aerial photo,
+   then the original brand gradient. The gradient underneath is the fallback —
+   if assets/home-hero.jpg is ever missing that layer is simply skipped and
+   the hero looks as it did before the photo, rather than breaking.
+
+   The scrim is weighted to the left because the text is left-aligned. The
+   photo's brightest pixels behind the text are pure white (rooftops, clouds),
+   so alpha stays >= 0.72 across the text column, which holds white body copy
+   at 6.8:1 even over white. It lifts to 0.26 on the right so the marina and
+   the water stay visible.
+   -------------------------------------------------------------------- */
 .hero {
-  background:
-    linear-gradient(180deg, rgba(10, 29, 55, 0.82), rgba(10, 29, 55, 0.55)),
+  background-color: var(--color-navy);
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(10, 29, 55, 0.93) 0%,
+      rgba(10, 29, 55, 0.86) 30%,
+      rgba(10, 29, 55, 0.72) 52%,
+      rgba(10, 29, 55, 0.44) 74%,
+      rgba(10, 29, 55, 0.26) 100%
+    ),
+    url("assets/home-hero.jpg"),
     linear-gradient(135deg, #123258 0%, #0a1d37 55%, #081527 100%);
+  background-size: cover;
+  background-position: center 58%;
+  background-repeat: no-repeat;
   color: var(--color-white);
-  padding: 90px 0 70px;
+  padding: 104px 0 88px;
 }
 .hero h1 {
   color: var(--color-white);
@@ -273,6 +296,21 @@ button:focus-visible {
   gap: 14px;
   margin-top: 28px;
   flex-wrap: wrap;
+}
+/* On narrow screens the text runs the full width, so the left-weighted
+   scrim would strand it over the bright side of the photo. Flatten it. */
+@media (max-width: 700px) {
+  .hero {
+    padding: 76px 0 66px;
+    background-image:
+      linear-gradient(
+        180deg,
+        rgba(10, 29, 55, 0.88) 0%,
+        rgba(10, 29, 55, 0.82) 100%
+      ),
+      url("assets/home-hero.jpg"),
+      linear-gradient(135deg, #123258 0%, #0a1d37 55%, #081527 100%);
+  }
 }
 
 /* ---------------- Feature strip ---------------- */
@@ -498,20 +536,27 @@ button:focus-visible {
 }
 
 /* Photo variant — used on About Us / Contact Us. Set the photo via inline
-   style="background-image: url('assets/xxx.jpg')" on the element. If the
-   image is missing/404s, the background-color fallback keeps it looking
-   like the plain page-header rather than a broken box. */
+   style="background-image: url('assets/xxx.jpg')" on the element; the scrim
+   lives on ::before so the inline photo never has to fight it.
+
+   Matches the home hero: a navy scrim weighted to the left, because the text
+   is left-aligned. Both photos are bright aerials whose worst pixels behind
+   the text are near-white, so alpha stays >= 0.72 across the text column and
+   lifts to 0.26 on the right, where the marina and the beach stay visible.
+
+   background-color is navy rather than the page background: the text on this
+   header is white, so if the photo ever 404s it must degrade to dark, not to
+   white-on-light. */
 .page-header-photo {
   position: relative;
   overflow: hidden;
-  min-height: 260px;
+  min-height: 320px;
   display: flex;
   align-items: center;
-  padding: 50px 0;
-  background-color: var(--color-bg);
+  padding: 68px 0;
+  background-color: var(--color-navy);
   background-size: cover;
-  background-position: center;
-  border-bottom: 1px solid var(--color-border);
+  background-position: center 55%;
 }
 .page-header-photo::before {
   content: "";
@@ -519,11 +564,11 @@ button:focus-visible {
   inset: 0;
   background: linear-gradient(
     90deg,
-    var(--color-bg) 0%,
-    var(--color-bg) 25%,
-    rgba(244, 246, 251, 0.5) 42%,
-    rgba(244, 246, 251, 0.12) 65%,
-    rgba(244, 246, 251, 0) 90%
+    rgba(10, 29, 55, 0.93) 0%,
+    rgba(10, 29, 55, 0.86) 30%,
+    rgba(10, 29, 55, 0.72) 52%,
+    rgba(10, 29, 55, 0.44) 74%,
+    rgba(10, 29, 55, 0.26) 100%
   );
 }
 .page-header-photo .container {
@@ -532,10 +577,12 @@ button:focus-visible {
   width: 100%;
 }
 .page-header-photo h1 {
+  color: var(--color-white);
   max-width: 480px;
 }
 .page-header-photo p {
-  max-width: 420px;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 440px;
 }
 .header-accent {
   width: 44px;
@@ -544,14 +591,18 @@ button:focus-visible {
   margin-top: 14px;
   border-radius: 2px;
 }
+/* Same reasoning as the home hero: at narrow widths the text runs the full
+   width, so the left-weighted scrim would strand it over the bright side. */
 @media (max-width: 700px) {
+  .page-header-photo {
+    min-height: 250px;
+    padding: 52px 0;
+  }
   .page-header-photo::before {
     background: linear-gradient(
-      90deg,
-      var(--color-bg) 0%,
-      var(--color-bg) 60%,
-      rgba(244, 246, 251, 0.4) 85%,
-      rgba(244, 246, 251, 0) 100%
+      180deg,
+      rgba(10, 29, 55, 0.88) 0%,
+      rgba(10, 29, 55, 0.82) 100%
     );
   }
 }
