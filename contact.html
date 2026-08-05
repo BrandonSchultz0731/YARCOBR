@@ -361,15 +361,24 @@
         .getElementById("contact-form")
         .addEventListener("submit", function () {
           const name = document.getElementById("name").value;
-          const subject = document.getElementById("subject").value;
-          const message = document.getElementById("message").value;
           const email = document.getElementById("email").value;
-          const body = encodeURIComponent(
-            "Name: " + name + "\nEmail: " + email + "\n\n" + message,
-          );
+          const phone = document.getElementById("phone").value;
+          const message = document.getElementById("message").value;
+
+          // Use the option's visible label ("Schedule a Showing"), not its
+          // value ("showing"), so the email subject reads naturally.
+          const subjectSelect = document.getElementById("subject");
+          const subjectLabel =
+            subjectSelect.options[subjectSelect.selectedIndex].text;
+
+          // Phone is optional — only include the line when one was entered.
+          const lines = ["Name: " + name, "Email: " + email];
+          if (phone.trim()) lines.push("Phone: " + phone);
+
+          const body = encodeURIComponent(lines.join("\n") + "\n\n" + message);
           window.location.href =
             "mailto:dmschultz1964@gmail.com?subject=" +
-            encodeURIComponent("YARCOBR Contact — " + subject) +
+            encodeURIComponent("YARCOBR Contact — " + subjectLabel) +
             "&body=" +
             body;
         });

@@ -1,15 +1,16 @@
-name: Update Report Index
+name: Update Report & Survey Index
 
-# Runs automatically whenever a file in /reports is added, renamed, or removed.
-# No one needs to trigger this manually for normal use — uploading a
-# correctly named PDF through the GitHub website is enough. workflow_dispatch
-# below adds a manual "Run workflow" button in the Actions tab, useful for
-# edge cases like recovering from a force-push (see repo README).
+# Runs automatically whenever a file in /reports or /survey is added,
+# renamed, or removed. No one needs to trigger this manually for normal use —
+# uploading a correctly named PDF through the GitHub website is enough.
+# workflow_dispatch below adds a manual "Run workflow" button in the Actions
+# tab, useful for edge cases like recovering from a force-push (see repo README).
 on:
   push:
     branches: [main]
     paths:
       - "reports/**"
+      - "survey/**"
   workflow_dispatch:
 
 permissions:
@@ -25,8 +26,11 @@ jobs:
       - name: Generate reports.json from /reports folder
         run: node scripts/generate-reports-json.js
 
-      - name: Commit updated reports.json (if changed)
+      - name: Generate survey.json from /survey folder
+        run: node scripts/generate-survey-json.js
+
+      - name: Commit updated index files (if changed)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Auto-update reports.json"
-          file_pattern: reports.json
+          commit_message: "Auto-update reports.json / survey.json"
+          file_pattern: reports.json survey.json

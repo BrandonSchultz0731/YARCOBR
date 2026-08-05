@@ -1,11 +1,12 @@
 <!--
-  MONTHLY WORKFLOW NOTE: unlike /reports, the numbers, charts, and takeaways
-  on this page are NOT automated — survey.json only drives the page title
-  and the badge date range shown near the top (via /survey/YYYY-MM.pdf
-  uploads, same pattern as reports). The actual stats, donut percentages,
-  key takeaways, and AI summary below need to be edited by hand each time a
-  new survey closes. Search this file for "July 2026" / the numbers to find
-  what to update.
+  MONTHLY WORKFLOW NOTE: unlike /reports, almost nothing on this page is
+  automated. Uploading /survey/YYYY-MM.pdf only repoints the two
+  "survey results PDF" buttons (they hide themselves if no PDF exists yet).
+
+  Everything else — the intro paragraph, the survey period badge, the stats,
+  the donut percentages, the key takeaways, and the AI summary — is written
+  by hand and must be updated each time a new survey closes. Search this file
+  for "July 2026" and for the numbers themselves to find what to change.
 -->
 <!doctype html>
 <html lang="en">
@@ -202,7 +203,12 @@
               social events.
             </li>
           </ul>
-          <a href="survey/2026-07-survey-results.pdf" class="btn btn-primary">
+          <a
+            href="#"
+            class="btn btn-primary"
+            id="survey-view-link"
+            style="display: none"
+          >
             View Full Survey Results →
           </a>
         </div>
@@ -284,8 +290,10 @@
 
       <div class="actions" style="justify-content: center">
         <a
-          href="survey/2026-07-survey-results.pdf"
+          href="#"
           class="btn btn-primary"
+          id="survey-download-link"
+          style="display: none"
           download
         >
           ⬇ Download Survey Report (PDF)
@@ -326,10 +334,24 @@
 
     <div id="site-footer"></div>
 
+    <script src="js/survey-loader.js"></script>
     <script src="js/components.js"></script>
     <script>
       renderHeader("pulse");
       renderFooter();
+
+      // Point the two PDF buttons at the most recent /survey/YYYY-MM.pdf.
+      // If no survey PDF has been uploaded yet, leave them hidden rather
+      // than linking to a file that doesn't exist.
+      loadSurveys().then(function (surveys) {
+        if (!surveys.length) return;
+        const latest = surveys[0];
+        ["survey-view-link", "survey-download-link"].forEach(function (id) {
+          const link = document.getElementById(id);
+          link.href = latest.pdf;
+          link.style.display = "";
+        });
+      });
 
       document
         .getElementById("share-results-btn")

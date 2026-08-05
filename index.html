@@ -167,10 +167,12 @@
 
       loadSurveys().then(function (surveys) {
         const panel = document.getElementById("latest-survey-panel");
+        // No survey PDF uploaded yet — community-pulse.html still carries the
+        // hand-written results, so link there without claiming the month.
         if (!surveys.length) {
           panel.querySelector(".thumb").innerHTML = "<span>PULSE</span>";
           panel.querySelector("p").textContent =
-            "No survey results have been published yet.";
+            "See what your neighbors are saying about life at YARCOBR.";
           return;
         }
         const latest = surveys[0];
