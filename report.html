@@ -12,9 +12,9 @@
     <div class="page-header">
       <div class="container">
         <div class="breadcrumb">
-          <a href="index.html">Home</a>
+          <a href="/">Home</a>
           /
-          <a href="market-reports.html">Market Reports</a>
+          <a href="/market-reports">Market Reports</a>
           /
           <span id="crumb-current">Report</span>
         </div>
@@ -46,7 +46,7 @@
           bodyMount.innerHTML = `
         <div class="notice">
           <p>The report you're looking for may have been moved or the link is incorrect.</p>
-          <a href="market-reports.html" class="btn btn-primary">Browse All Reports</a>
+          <a href="/market-reports" class="btn btn-primary">Browse All Reports</a>
         </div>
       `;
           return;
@@ -57,28 +57,24 @@
 
         headerMount.innerHTML = `
       <div class="report-hero">
-        <div class="cover-large">
-          <span class="cover-brand">YARCOBR</span>
-          <span class="cover-sub">Market Report</span>
-          <span class="cover-month">${report.title}</span>
-        </div>
-        <div>
-          <h1>${report.title} Market Report</h1>
-          <p>${report.excerpt}</p>
-          <div class="actions" style="margin-top:16px;">
-            <a href="${report.pdf}" class="btn btn-primary" download>⬇ Download PDF</a>
-            <a href="market-reports.html" class="btn btn-secondary">← Back to Reports</a>
-          </div>
+        <h1>${report.title} Market Report</h1>
+        <p>${report.excerpt}</p>
+        <div class="actions">
+          <a href="${report.pdf}" class="btn btn-gold" download>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 20h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download PDF
+          </a>
+          <a href="/market-reports" class="btn btn-ghost">← Back to Reports</a>
         </div>
       </div>
     `;
 
         const adjacent = getAdjacent(reports, report.slug);
         const newerLink = adjacent.newer
-          ? `<a href="report.html?month=${adjacent.newer.slug}">${adjacent.newer.title} →</a>`
+          ? `<a href="/report?month=${adjacent.newer.slug}">${adjacent.newer.title} →</a>`
           : `<span class="disabled">Newest report</span>`;
         const olderLink = adjacent.older
-          ? `<a href="report.html?month=${adjacent.older.slug}">← ${adjacent.older.title}</a>`
+          ? `<a href="/report?month=${adjacent.older.slug}">← ${adjacent.older.title}</a>`
           : `<span class="disabled">Oldest report</span>`;
 
         bodyMount.innerHTML = `

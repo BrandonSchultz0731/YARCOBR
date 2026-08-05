@@ -26,7 +26,7 @@
         </p>
         <div class="actions" id="hero-actions">
           <a
-            href="market-reports.html"
+            href="/market-reports"
             class="btn btn-secondary"
             style="
               background: transparent;
@@ -147,13 +147,25 @@
             <h3>Community Pulse</h3>
             <p>Loading…</p>
             <div class="panel-actions">
-              <a href="community-pulse.html" class="btn btn-primary">
+              <a href="/community-pulse" class="btn btn-primary">
                 View Results →
               </a>
             </div>
           </div>
         </div>
       </div>
+
+      <section class="home-cta">
+        <h2>Thinking about buying or selling at YARCOBR?</h2>
+        <p>
+          Daniel and Matt live here too. Ask them what your unit is worth, or
+          anything else about the local market.
+        </p>
+        <div class="actions">
+          <a href="/contact" class="btn btn-gold">Contact Us →</a>
+          <a href="/about" class="btn btn-ghost">Meet Daniel &amp; Matt</a>
+        </div>
+      </section>
     </div>
 
     <div id="site-footer"></div>
@@ -201,7 +213,7 @@
 
         // Hero "View latest report" button
         const heroBtn = document.createElement("a");
-        heroBtn.href = "report.html?month=" + latest.slug;
+        heroBtn.href = "/report?month=" + latest.slug;
         heroBtn.className = "btn btn-gold";
         heroBtn.textContent = "View " + latest.title + " Market Report →";
         heroActions.prepend(heroBtn);
@@ -214,7 +226,7 @@
         const actions = document.createElement("div");
         actions.className = "panel-actions";
         actions.innerHTML =
-          '<a href="report.html?month=' +
+          '<a href="/report?month=' +
           latest.slug +
           '" class="btn btn-primary">View Report Online</a>' +
           '<a href="' +

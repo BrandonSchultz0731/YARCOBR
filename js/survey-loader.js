@@ -8,7 +8,8 @@
 
 async function loadSurveys() {
   try {
-    const res = await fetch("survey.json", { cache: "no-store" });
+    // Root-relative for the same reason as reports-loader.js.
+    const res = await fetch("/survey.json", { cache: "no-store" });
     if (!res.ok)
       throw new Error("survey.json not found (status " + res.status + ")");
     return await res.json();

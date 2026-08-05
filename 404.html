@@ -1,0 +1,144 @@
+<!--
+  GitHub Pages serves this file for any URL it can't find, at whatever address
+  the visitor actually typed. That means every path in here must be
+  root-relative ("/styles.css", not "styles.css") — a relative path would
+  resolve against the broken URL and 404 as well.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Not Found — LiveYARCOBR</title>
+    <meta name="robots" content="noindex" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div id="site-header"></div>
+
+    <div class="page-header">
+      <div class="container">
+        <p class="error-code">Error 404</p>
+        <h1>We can't find that page</h1>
+        <p>
+          The link may be out of date, or the address may have a small typo.
+          Everything on the site is reachable from the options below.
+        </p>
+      </div>
+    </div>
+
+    <div class="container section">
+      <div class="notfound-grid">
+        <a class="notfound-card" href="/market-reports">
+          <span class="icon-circle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <rect
+                x="5"
+                y="3"
+                width="14"
+                height="18"
+                rx="1.5"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M8 8h8M8 12h8M8 16h5"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </span>
+          <div>
+            <h3>Market Reports</h3>
+            <p>Every monthly report, newest first.</p>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="notfound-card" href="/community-pulse">
+          <span class="icon-circle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <circle
+                cx="9"
+                cy="8"
+                r="3"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14.5 14.3c2.6.4 4.5 2.6 4.5 5.2"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </span>
+          <div>
+            <h3>Community Pulse</h3>
+            <p>What your neighbors said in the latest survey.</p>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="notfound-card" href="/contact">
+          <span class="icon-circle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <rect
+                x="3"
+                y="5"
+                width="18"
+                height="14"
+                rx="2"
+                stroke="currentColor"
+                stroke-width="1.6"
+              />
+              <path d="m3 7 9 6 9-6" stroke="currentColor" stroke-width="1.6" />
+            </svg>
+          </span>
+          <div>
+            <h3>Contact Us</h3>
+            <p>Tell Daniel or Matt what you were looking for.</p>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <!-- The most common way to land here is a stale link to a report that
+           has since been replaced, so offer the current one directly. Hidden
+           until reports.json confirms one exists. -->
+      <div class="cta-bar" id="latest-report-cta" style="display: none">
+        <p id="latest-report-text">Looking for a market report?</p>
+        <a
+          class="btn btn-primary"
+          id="latest-report-link"
+          href="/market-reports"
+        >
+          View the latest report
+        </a>
+      </div>
+    </div>
+
+    <div id="site-footer"></div>
+
+    <script src="/js/reports-loader.js"></script>
+    <script src="/js/components.js"></script>
+    <script>
+      renderHeader("");
+      renderFooter();
+
+      loadReports().then(function (reports) {
+        if (!reports.length) return;
+        const latest = reports[0];
+        document.getElementById("latest-report-text").textContent =
+          "Looking for a market report? The most recent one is " +
+          latest.title +
+          ".";
+        const link = document.getElementById("latest-report-link");
+        link.href = "/report?month=" + latest.slug;
+        link.textContent = "View the " + latest.title + " report →";
+        document.getElementById("latest-report-cta").style.display = "";
+      });
+    </script>
+  </body>
+</html>

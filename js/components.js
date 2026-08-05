@@ -19,11 +19,11 @@ const SAILBOAT_ICON = `
 </svg>`;
 
 const NAV_LINKS = [
-  { key: "home", label: "Home", href: "index.html" },
-  { key: "reports", label: "Market Reports", href: "market-reports.html" },
-  { key: "pulse", label: "Community Pulse", href: "community-pulse.html" },
-  { key: "about", label: "About Us", href: "about.html" },
-  { key: "contact", label: "Contact Us", href: "contact.html" },
+  { key: "home", label: "Home", href: "/" },
+  { key: "reports", label: "Market Reports", href: "/market-reports" },
+  { key: "pulse", label: "Community Pulse", href: "/community-pulse" },
+  { key: "about", label: "About Us", href: "/about" },
+  { key: "contact", label: "Contact Us", href: "/contact" },
 ];
 
 function renderHeader(activeKey, options) {
@@ -39,7 +39,7 @@ function renderHeader(activeKey, options) {
   mount.innerHTML = `
     <header class="site-header">
       <div class="container">
-        <a href="index.html" class="brand">
+        <a href="/" class="brand">
           <span style="color: var(--color-navy);">${SAILBOAT_ICON}</span>
           <span class="brand-text">
             <span class="brand-name">LiveYARCOBR</span>
@@ -72,18 +72,18 @@ function renderFooter() {
   mount.innerHTML = `
     <footer class="site-footer">
       <div class="container">
-        <a href="index.html" class="brand">
+        <a href="/" class="brand">
           <span style="color: var(--color-white);">${SAILBOAT_ICON}</span>
           <span class="brand-text">
             <span class="brand-name">LiveYARCOBR</span>
           </span>
         </a>
         <nav class="footer-nav">
-          <a href="index.html">Home</a>
-          <a href="market-reports.html">Market Reports</a>
-          <a href="community-pulse.html">Community Pulse</a>
-          <a href="about.html">About Us</a>
-          <a href="contact.html">Contact Us</a>
+          <a href="/">Home</a>
+          <a href="/market-reports">Market Reports</a>
+          <a href="/community-pulse">Community Pulse</a>
+          <a href="/about">About Us</a>
+          <a href="/contact">Contact Us</a>
         </nav>
       </div>
       <div class="footer-disclaimer">

@@ -6,7 +6,9 @@
 
 async function loadReports() {
   try {
-    const res = await fetch("reports.json", { cache: "no-store" });
+    // Root-relative, not "reports.json": 404.html is served at whatever URL
+    // the visitor mistyped, so a relative path would resolve against that.
+    const res = await fetch("/reports.json", { cache: "no-store" });
     if (!res.ok)
       throw new Error("reports.json not found (status " + res.status + ")");
     return await res.json();

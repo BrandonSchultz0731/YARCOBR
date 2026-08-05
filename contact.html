@@ -200,7 +200,7 @@
         </div>
       </div>
 
-      <div class="two-col" style="margin-top: 26px">
+      <div class="two-col align-start" style="margin-top: 26px">
         <div class="contact-panel">
           <h3>Send Us a Message</h3>
           <p>
@@ -253,7 +253,29 @@
               Send Message
             </button>
             <p class="form-note">
-              🔒 Your information is kept private and will never be shared.
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <rect
+                  x="5"
+                  y="11"
+                  width="14"
+                  height="9"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                />
+                <path
+                  d="M8 11V7a4 4 0 0 1 8 0v4"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                />
+              </svg>
+              Your information is kept private and will never be shared.
             </p>
           </form>
         </div>
@@ -261,7 +283,7 @@
         <div class="contact-panel">
           <h3>Other Ways We Can Help</h3>
           <div class="help-list">
-            <div class="help-item">
+            <a class="help-item" href="#contact-form" data-subject="showing">
               <span class="icon-circle">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path
@@ -276,9 +298,9 @@
                 <h4>Schedule a Showing</h4>
                 <p>Looking to buy in YARCOBR? We'd love to show you around.</p>
               </div>
-              <span class="arrow">→</span>
-            </div>
-            <div class="help-item">
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="help-item" href="#contact-form" data-subject="valuation">
               <span class="icon-circle">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path
@@ -293,9 +315,9 @@
                 <h4>Home Valuation</h4>
                 <p>Curious what your condo is worth? Get a free estimate.</p>
               </div>
-              <span class="arrow">→</span>
-            </div>
-            <div class="help-item">
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="help-item" href="#contact-form" data-subject="subscribe">
               <span class="icon-circle">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <rect
@@ -319,9 +341,9 @@
                 <h4>Market Report Subscription</h4>
                 <p>Receive the monthly market report directly to your inbox.</p>
               </div>
-              <span class="arrow">→</span>
-            </div>
-            <div class="help-item">
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="help-item" href="#contact-form" data-subject="general">
               <span class="icon-circle">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <circle
@@ -343,8 +365,8 @@
                 <h4>General Question</h4>
                 <p>Have a question not listed here? We're happy to help.</p>
               </div>
-              <span class="arrow">→</span>
-            </div>
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>
           </div>
         </div>
       </div>
@@ -356,6 +378,19 @@
     <script>
       renderHeader("contact");
       renderFooter();
+
+      // "Other Ways We Can Help" — each row jumps to the form and preselects
+      // the matching Subject, so the arrow on it means something. The href
+      // does the scrolling, so this still degrades to a plain jump link.
+      document.querySelectorAll(".help-item").forEach(function (link) {
+        link.addEventListener("click", function () {
+          const select = document.getElementById("subject");
+          select.value = link.dataset.subject;
+          setTimeout(function () {
+            document.getElementById("name").focus({ preventScroll: true });
+          }, 300);
+        });
+      });
 
       document
         .getElementById("contact-form")

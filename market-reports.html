@@ -94,18 +94,18 @@
 
           grid.innerHTML = list
             .map(function (r) {
+              // The month is the card's title — it is not repeated in the
+              // body, and the generic excerpt is omitted here because it is
+              // identical on every report and reads as filler in a grid.
               return `
           <div class="report-card">
             <div class="report-cover">
-              <span class="cover-brand">YARCOBR</span>
-              <span class="cover-sub">Market Report</span>
+              <span class="cover-sub">YARCOBR Market Report</span>
               <span class="cover-month">${r.title}</span>
             </div>
             <div class="report-card-body">
-              <h3>${r.title}</h3>
-              <p>${r.excerpt}</p>
               <div class="report-card-actions">
-                <a href="report.html?month=${r.slug}" class="btn btn-primary btn-block">View Online →</a>
+                <a href="/report?month=${r.slug}" class="btn btn-primary btn-block">View Online →</a>
                 <a href="${r.pdf}" class="btn btn-secondary btn-block" download>Download PDF</a>
               </div>
             </div>

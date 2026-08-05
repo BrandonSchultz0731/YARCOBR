@@ -246,6 +246,18 @@ button:focus-visible {
   background: var(--color-bg);
 }
 
+/* Secondary action on a dark background, where .btn-secondary's white fill
+   would read as the primary. */
+.btn-ghost {
+  background: transparent;
+  color: var(--color-white);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
 .btn-block {
   width: 100%;
   justify-content: center;
@@ -396,53 +408,44 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
 }
+/* The month is the card's title, set in the cover itself. The old 4:3 cover
+   was mostly empty navy — on a phone three of them filled a screen and a half
+   with nothing. This is a band, not a poster. */
 .report-cover {
-  aspect-ratio: 4 / 3;
   background: linear-gradient(160deg, #14294a, #0a1d37 60%, #081527);
   color: var(--color-white);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-end;
   gap: 6px;
-  position: relative;
-}
-.report-cover .cover-brand {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  font-size: 1.1rem;
+  padding: 26px 20px 20px;
+  min-height: 132px;
 }
 .report-cover .cover-sub {
   font-size: 0.6rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.6);
 }
 .report-cover .cover-month {
-  margin-top: 10px;
-  font-size: 0.95rem;
+  font-family: var(--font-heading);
+  font-size: 1.55rem;
+  line-height: 1.1;
   font-weight: 600;
-  color: var(--color-gold);
+  color: var(--color-white);
 }
 .report-card-body {
-  padding: 20px 20px 22px;
+  padding: 16px 20px 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
-}
-.report-card-body h3 {
-  margin-bottom: 8px;
-}
-.report-card-body p {
-  font-size: 0.88rem;
-  flex: 1;
+  justify-content: flex-end;
 }
 .report-card-actions {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 12px;
 }
 .report-card-actions .btn {
   font-size: 0.82rem;
@@ -498,6 +501,98 @@ button:focus-visible {
   padding: 10px 16px;
 }
 
+/* ---------------- 404 page ---------------- */
+.error-code {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--color-gold);
+  margin-bottom: 10px;
+}
+.notfound-grid {
+  display: grid;
+  gap: 12px;
+  max-width: 640px;
+}
+.notfound-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: inherit;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+.notfound-card:hover {
+  border-color: var(--color-navy);
+}
+.notfound-card:hover .arrow {
+  transform: translateX(3px);
+}
+.notfound-card h3 {
+  margin: 0 0 2px;
+  font-size: 1.05rem;
+}
+.notfound-card p {
+  margin: 0;
+  font-size: 0.86rem;
+}
+.notfound-card .arrow {
+  margin-left: auto;
+  color: var(--color-navy);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.notfound-card .icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-navy);
+}
+@media (prefers-reduced-motion: reduce) {
+  .notfound-card,
+  .notfound-card .arrow {
+    transition: none;
+  }
+}
+
+/* ---------------- Home closing CTA ----------------
+   A contained panel rather than a full-bleed band: the footer directly below
+   is also navy, and full-bleed would merge the two into one dark mass. */
+.home-cta {
+  background: linear-gradient(135deg, #123258 0%, #0a1d37 55%, #081527 100%);
+  color: var(--color-white);
+  border-radius: var(--radius);
+  padding: 52px 28px;
+  text-align: center;
+  margin-bottom: 60px;
+}
+.home-cta h2 {
+  color: var(--color-white);
+  margin-bottom: 12px;
+}
+.home-cta p {
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 540px;
+  margin: 0 auto 24px;
+}
+.home-cta .actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 /* ---------------- Footer ---------------- */
 .site-footer {
   background: var(--color-navy);
@@ -529,10 +624,19 @@ button:focus-visible {
 }
 
 /* ---------------- Generic page header (non-home pages) ---------------- */
+/* Every non-home page opens on the same navy band. Where a photo exists the
+   .page-header-photo variant layers it on top; the colour and type treatment
+   are identical either way, so the pages read as one set. */
 .page-header {
-  background: var(--color-white);
-  border-bottom: 1px solid var(--color-border);
-  padding: 44px 0 30px;
+  background: linear-gradient(135deg, #123258 0%, #0a1d37 55%, #081527 100%);
+  color: var(--color-white);
+  padding: 56px 0 46px;
+}
+.page-header h1 {
+  color: var(--color-white);
+}
+.page-header p {
+  color: rgba(255, 255, 255, 0.82);
 }
 
 /* Photo variant — used on About Us / Contact Us. Set the photo via inline
@@ -608,35 +712,27 @@ button:focus-visible {
 }
 .breadcrumb {
   font-size: 0.8rem;
-  color: var(--color-ink-muted);
-  margin-bottom: 14px;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 16px;
+}
+.breadcrumb a {
+  color: rgba(255, 255, 255, 0.88);
 }
 .breadcrumb a:hover {
-  color: var(--color-navy);
+  color: var(--color-white);
 }
 
-/* ---------------- Report (individual) page ---------------- */
-.report-hero {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 32px;
-  align-items: center;
+/* ---------------- Report (individual) page ----------------
+   No placeholder cover here: the PDF's own branded cover renders directly
+   below, so a stand-in above it was showing the same thing twice, worse. */
+.report-hero p {
+  max-width: 620px;
 }
-@media (max-width: 700px) {
-  .report-hero {
-    grid-template-columns: 1fr;
-  }
-}
-.report-hero .cover-large {
-  aspect-ratio: 4/3;
-  border-radius: var(--radius);
-  background: linear-gradient(160deg, #14294a, #0a1d37 60%, #081527);
-  color: var(--color-white);
+.report-hero .actions {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
 }
 .pdf-frame {
   width: 100%;
@@ -840,23 +936,33 @@ button:focus-visible {
 }
 
 /* ---------------- Survey period badge ---------------- */
+/* Sits on the navy page header, so it cannot be navy itself — a solid
+   --color-navy fill is the exact middle stop of that gradient and the chip
+   disappeared into it. A translucent fill plus a light hairline keeps it
+   legible on any part of the gradient without competing with the h1. */
 .survey-badge {
-  background: var(--color-navy);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   color: var(--color-white);
   border-radius: var(--radius);
-  padding: 14px 18px;
+  padding: 12px 18px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
   font-size: 0.85rem;
   white-space: nowrap;
+}
+.survey-badge svg {
+  color: var(--color-gold);
+  flex-shrink: 0;
 }
 .survey-badge .label {
   font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.72);
   display: block;
+  margin-bottom: 1px;
 }
 .page-header-flex {
   display: flex;
@@ -1132,6 +1238,22 @@ button:focus-visible {
   color: var(--color-ink-muted);
   margin-top: 8px;
 }
+.form-note svg {
+  vertical-align: -2px;
+  margin-right: 4px;
+}
+
+/* Panel heading with a leading icon — replaces the emoji that used to sit
+   inline in the heading text and rendered differently on every device. */
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.panel-title svg {
+  color: var(--color-gold-dark);
+  flex-shrink: 0;
+}
 
 /* ---------------- Help list (Contact "Other Ways We Can Help") ---------------- */
 .help-list {
@@ -1139,12 +1261,36 @@ button:focus-visible {
   flex-direction: column;
   gap: 4px;
 }
+/* These rows carry an arrow and a hover state, so they have to actually do
+   something. Each one is a link to the form that preselects the matching
+   Subject option. */
 .help-item {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 4px;
+  padding: 14px 8px;
+  margin: 0 -8px;
   border-bottom: 1px solid var(--color-border);
+  color: inherit;
+  border-radius: 6px;
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.help-item:hover {
+  background: var(--color-bg);
+}
+.help-item:hover .arrow {
+  transform: translateX(3px);
+}
+.help-item .arrow {
+  transition: transform 0.15s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .help-item,
+  .help-item .arrow {
+    transition: none;
+  }
 }
 .help-item:last-child {
   border-bottom: none;
@@ -1175,6 +1321,13 @@ button:focus-visible {
 }
 
 /* ---------------- CTA bar (About page) ---------------- */
+/* Grid children stretch by default, which left the shorter panel with a void
+   below its content. Opt out where the columns are genuinely different
+   lengths. */
+.align-start {
+  align-items: start;
+}
+
 .cta-bar {
   background: var(--color-bg);
   border: 1px solid var(--color-border);

@@ -115,17 +115,59 @@ browsing the site itself.
 
 ## Testing locally
 
-Because the pages now fetch `reports.json` with JavaScript, opening the HTML
-files by double-clicking them (`file://...`) will NOT load the report list —
-browsers block that for security. Instead, run a tiny local server from the
-project folder:
+Because the pages fetch `reports.json` with JavaScript, opening the HTML files
+by double-clicking them (`file://...`) will NOT load the report list —
+browsers block that for security. Run the included preview server from the
+project folder instead:
 
 ```
-python3 -m http.server 8000
+python3 scripts/serve.py
 ```
 
-then visit `http://localhost:8000` in your browser. (This limitation doesn't
-apply once it's live on GitHub Pages — only to local testing.)
+then visit `http://localhost:8000` in your browser. Stop it with Ctrl+C.
+
+**Use that script rather than plain `python3 -m http.server`.** The site's
+links are extensionless (`/about`, not `/about.html`) because that is how
+GitHub Pages serves them — but the plain Python server doesn't do that and
+returns 404 for `/about`, which makes the site look broken locally when it is
+fine live. `scripts/serve.py` is the same tiny server with that one behaviour
+added.
+
+Neither limitation applies once the site is live — only to local testing.
+
+## Page URLs
+
+Links across the site are written without the `.html` extension:
+
+| Page | URL |
+| --- | --- |
+| Home | `/` |
+| Market Reports | `/market-reports` |
+| A single report | `/report?month=2026-08` |
+| Community Pulse | `/community-pulse` |
+| About Us | `/about` |
+| Contact Us | `/contact` |
+
+GitHub Pages serves `about.html` at `/about` automatically — no redirect and
+no folder restructuring, so the files stay exactly where they are. The old
+`/about.html` URLs still work too, so any link already shared out stays valid.
+
+Because these links start with `/`, the site has to be served from the root of
+a domain. It is — `CNAME` points at `liveyarcobr.com`. If it were ever moved
+to a project-page URL like `username.github.io/YARCOBR/`, those links would
+need a prefix.
+
+### The "page not found" page
+
+`404.html` is shown automatically for any address that doesn't exist —
+mistyped URLs, and old links to reports that have since been removed. It
+offers the main sections plus a direct link to the current market report,
+which it reads from `reports.json` at runtime.
+
+Every path inside `404.html` starts with `/` on purpose: GitHub Pages serves
+that file at whatever wrong address the visitor typed, so a relative path
+would resolve against the broken URL and fail too. Keep that in mind if you
+edit it.
 
 ## Compressing PDFs
 
