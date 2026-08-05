@@ -36,7 +36,7 @@ Until a PDF exists, those two buttons stay hidden rather than linking to a
 missing file.
 
 It does **not** automatically update the actual stats, donut chart
-percentages, key takeaways, or AI summary on `community-pulse.html` — those
+percentages, key takeaways, or community summary on `community-pulse.html` — those
 are specific numbers from each survey that can't be derived from a filename.
 Whoever compiles the survey results still needs to edit those directly in
 `community-pulse.html` each cycle (there's a comment at the top of that file
@@ -139,14 +139,14 @@ Neither limitation applies once the site is live — only to local testing.
 
 Links across the site are written without the `.html` extension:
 
-| Page | URL |
-| --- | --- |
-| Home | `/` |
-| Market Reports | `/market-reports` |
+| Page            | URL                     |
+| --------------- | ----------------------- |
+| Home            | `/`                     |
+| Market Reports  | `/market-reports`       |
 | A single report | `/report?month=2026-08` |
-| Community Pulse | `/community-pulse` |
-| About Us | `/about` |
-| Contact Us | `/contact` |
+| Community Pulse | `/community-pulse`      |
+| About Us        | `/about`                |
+| Contact Us      | `/contact`              |
 
 GitHub Pages serves `about.html` at `/about` automatically — no redirect and
 no folder restructuring, so the files stay exactly where they are. The old

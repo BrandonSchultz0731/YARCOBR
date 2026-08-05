@@ -20,7 +20,7 @@ that isn't there.
 ## What this does NOT do
 
 Uploading a PDF here does **not** update the statistics, donut charts, key
-takeaways, or AI summary shown on `community-pulse.html`. Those numbers are
+takeaways, or community summary shown on `community-pulse.html`. Those numbers are
 specific to each survey and can't be derived from a filename — whoever
 compiles the results still needs to edit them by hand in that file each
 cycle. See the comment at the top of `community-pulse.html`.

@@ -6,7 +6,7 @@
     <title>Contact Us — LiveYARCOBR</title>
     <meta
       name="description"
-      content="Get in touch with Daniel Schultz and Matt Gelling — YARCOBR residents and real estate advisors."
+      content="Get in touch with Daniel Schultz and Matt Gelling — real estate advisors serving the YARCOBR community."
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -84,7 +84,9 @@
                   />
                 </svg>
               </span>
-              <span>dmschultz1964@gmail.com</span>
+              <a href="mailto:dmschultz1964@gmail.com">
+                dmschultz1964@gmail.com
+              </a>
             </div>
             <div class="contact-row">
               <span class="icon-circle">
@@ -105,13 +107,21 @@
               </span>
               <span>Yacht &amp; Racquet Club of Boca Raton, FL</span>
             </div>
-            <a
-              href="mailto:dmschultz1964@gmail.com"
-              class="btn btn-gold btn-block"
-              style="margin-top: 8px"
-            >
-              Email Daniel
-            </a>
+            <!-- "Email Daniel" is a mailto:, which silently does nothing on
+                 a device with no mail app set up. The copy button beside it
+                 always works, so no one hits a dead end. -->
+            <div class="email-actions">
+              <a href="mailto:dmschultz1964@gmail.com" class="btn btn-gold">
+                Email Daniel
+              </a>
+              <button
+                type="button"
+                class="btn btn-secondary copy-email"
+                data-email="dmschultz1964@gmail.com"
+              >
+                Copy address
+              </button>
+            </div>
           </div>
         </div>
         <div
@@ -133,7 +143,7 @@
           </div>
           <div>
             <h3 style="margin-bottom: 0">Matt Gelling</h3>
-            <div class="role">YARCOBR Resident</div>
+            <div class="role">Boca Raton Resident</div>
             <div class="company" style="margin-bottom: 10px">
               Real Estate Advisor · The Keyes Company
             </div>
@@ -168,7 +178,7 @@
                   />
                 </svg>
               </span>
-              <span>MattGelling@Keyes.com</span>
+              <a href="mailto:MattGelling@Keyes.com">MattGelling@Keyes.com</a>
             </div>
             <div class="contact-row">
               <span class="icon-circle">
@@ -189,13 +199,18 @@
               </span>
               <span>Yacht &amp; Racquet Club of Boca Raton, FL</span>
             </div>
-            <a
-              href="mailto:MattGelling@Keyes.com"
-              class="btn btn-gold btn-block"
-              style="margin-top: 8px"
-            >
-              Email Matt
-            </a>
+            <div class="email-actions">
+              <a href="mailto:MattGelling@Keyes.com" class="btn btn-gold">
+                Email Matt
+              </a>
+              <button
+                type="button"
+                class="btn btn-secondary copy-email"
+                data-email="MattGelling@Keyes.com"
+              >
+                Copy address
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -252,6 +267,52 @@
             <button type="submit" class="btn btn-primary" id="send-message-btn">
               Send Message
             </button>
+
+            <!-- Shown after submit. This site is static and has no server, so
+                 the form hands the message to the visitor's email app rather
+                 than sending it. The wording says exactly that — it must never
+                 claim a message was sent, because nothing has been. -->
+            <div class="form-status" id="form-status" role="status" hidden>
+              <div class="form-status-head">
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="m8.5 12.2 2.5 2.4 4.5-4.8"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Your message is ready to send
+              </div>
+              <p>
+                We handed it to your email app with everything filled in — press
+                send there and it comes straight to Daniel.
+              </p>
+              <p class="form-status-fallback">
+                Nothing opened? Copy the message and email it to
+                <a href="mailto:dmschultz1964@gmail.com">
+                  dmschultz1964@gmail.com
+                </a>
+              </p>
+              <button type="button" class="btn btn-secondary" id="copy-message">
+                Copy message
+              </button>
+            </div>
+
             <p class="form-note">
               <svg
                 width="13"
@@ -392,6 +453,38 @@
         });
       });
 
+      // Copy to clipboard with the button confirming in place. Falls back to
+      // a prompt on browsers that block the clipboard API (older Safari, and
+      // any page not served over https).
+      function copyText(text, button, doneLabel) {
+        const original = button.textContent.trim();
+        function confirmed() {
+          button.textContent = doneLabel;
+          button.classList.add("is-copied");
+          setTimeout(function () {
+            button.textContent = original;
+            button.classList.remove("is-copied");
+          }, 2000);
+        }
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(confirmed, function () {
+            window.prompt("Copy this:", text);
+          });
+        } else {
+          window.prompt("Copy this:", text);
+        }
+      }
+
+      document.querySelectorAll(".copy-email").forEach(function (button) {
+        button.addEventListener("click", function () {
+          copyText(button.dataset.email, button, "Copied ✓");
+        });
+      });
+
+      // Holds the last composed message so "Copy message" can offer it if the
+      // visitor's email app never opened.
+      let lastMessage = "";
+
       document
         .getElementById("contact-form")
         .addEventListener("submit", function () {
@@ -410,12 +503,31 @@
           const lines = ["Name: " + name, "Email: " + email];
           if (phone.trim()) lines.push("Phone: " + phone);
 
-          const body = encodeURIComponent(lines.join("\n") + "\n\n" + message);
+          const subject = "YARCOBR Contact — " + subjectLabel;
+          const body = lines.join("\n") + "\n\n" + message;
+          lastMessage = "Subject: " + subject + "\n\n" + body;
+
+          // Reveal the confirmation first, hand off to the mail app second,
+          // scroll last — in that order so a failure in any step can't stop
+          // the ones that matter more.
+          const status = document.getElementById("form-status");
+          status.hidden = false;
+
           window.location.href =
             "mailto:dmschultz1964@gmail.com?subject=" +
-            encodeURIComponent("YARCOBR Contact — " + subjectLabel) +
+            encodeURIComponent(subject) +
             "&body=" +
-            body;
+            encodeURIComponent(body);
+
+          if (status.scrollIntoView) {
+            status.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }
+        });
+
+      document
+        .getElementById("copy-message")
+        .addEventListener("click", function () {
+          copyText(lastMessage, this, "Copied ✓");
         });
     </script>
   </body>

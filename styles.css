@@ -884,6 +884,17 @@ button:focus-visible {
   margin-bottom: 16px;
   font-size: 0.95rem;
 }
+/* Email/phone values that are real links. Global `a` strips decoration, so
+   put a quiet underline back — otherwise there's nothing saying it's
+   clickable. */
+.contact-row a {
+  text-decoration: underline;
+  text-decoration-color: var(--color-border);
+  text-underline-offset: 3px;
+}
+.contact-row a:hover {
+  text-decoration-color: var(--color-gold-dark);
+}
 .contact-row .icon-circle {
   width: 34px;
   height: 34px;
@@ -1030,6 +1041,15 @@ button:focus-visible {
   border-radius: 2px;
   flex-shrink: 0;
 }
+/* A bucket nobody selected: listed for completeness, but muted and given a
+   hollow swatch so it doesn't imply a slice that isn't in the donut. */
+.donut-legend li.is-empty {
+  color: var(--color-ink-muted);
+}
+.donut-legend .swatch.is-empty {
+  background: transparent;
+  border: 1px solid var(--color-border);
+}
 
 /* ---------------- Highlight card (Chickee Bar style) ----------------
    Photo fills a flush left column via absolute inset, so the card has no
@@ -1041,11 +1061,16 @@ button:focus-visible {
   border-radius: var(--radius);
   overflow: hidden;
   display: flex;
-  align-items: stretch;
+  flex-direction: column;
 }
+/* The photo sits above the text at every width, not beside it. Beside it,
+   a half-width card left the media column ~240px wide, and a 3:2 landscape
+   shot cropped into that keeps only the middle strip. Matching the source
+   3:2 shows the room intact. */
 .highlight-media {
   position: relative;
-  flex: 0 0 42%;
+  flex: none;
+  aspect-ratio: 3 / 2;
   background: var(--color-bg);
 }
 .highlight-media img {
@@ -1115,18 +1140,6 @@ button:focus-visible {
   line-height: 1.6;
   max-width: 34ch;
 }
-@media (max-width: 560px) {
-  .highlight-card {
-    flex-direction: column;
-  }
-  .highlight-media {
-    flex: none;
-    height: 190px;
-  }
-  .highlight-content {
-    justify-content: flex-start;
-  }
-}
 .two-col-even {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1139,8 +1152,8 @@ button:focus-visible {
   }
 }
 
-/* ---------------- AI summary panel ---------------- */
-.ai-summary {
+/* ---------------- Community summary panel ---------------- */
+.summary-panel {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -1149,7 +1162,7 @@ button:focus-visible {
   gap: 16px;
   margin: 30px 0;
 }
-.ai-summary .ai-icon {
+.summary-panel .summary-icon {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -1161,11 +1174,11 @@ button:focus-visible {
   flex-shrink: 0;
   color: var(--color-navy);
 }
-.ai-summary p {
+.summary-panel p {
   font-size: 0.9rem;
   margin-bottom: 10px;
 }
-.ai-summary p:last-child {
+.summary-panel p:last-child {
   margin-bottom: 0;
 }
 
@@ -1241,6 +1254,57 @@ button:focus-visible {
 .form-note svg {
   vertical-align: -2px;
   margin-right: 4px;
+}
+
+/* Mail buttons on a contact card. Wraps to one per line once the card gets
+   narrow, rather than squeezing both. */
+.email-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.email-actions .btn {
+  flex: 1 1 130px;
+  justify-content: center;
+}
+
+/* Confirmation shown after the contact form composes a message. */
+.form-status {
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+}
+.form-status-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-heading);
+  font-size: 0.98rem;
+  color: var(--color-navy);
+  margin-bottom: 8px;
+}
+.form-status-head svg {
+  flex-shrink: 0;
+  color: var(--color-gold-dark);
+}
+.form-status p {
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+.form-status .form-status-fallback {
+  color: var(--color-ink-muted);
+  margin-bottom: 12px;
+}
+.form-status a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.btn.is-copied {
+  border-color: var(--color-gold-dark);
+  color: var(--color-gold-dark);
 }
 
 /* Panel heading with a leading icon — replaces the emoji that used to sit
