@@ -788,42 +788,6 @@ button:focus-visible {
   margin-right: 8px;
 }
 
-/* ---------------- Share row (individual report page) ---------------- */
-.share-row {
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid var(--color-border);
-}
-.share-row h4 {
-  margin-bottom: 12px;
-  font-size: 0.95rem;
-  color: var(--color-navy);
-}
-.share-buttons {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.share-buttons button,
-.share-buttons a {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-body);
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding: 9px 14px;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  background: var(--color-white);
-  color: var(--color-navy);
-  cursor: pointer;
-}
-.share-buttons button:hover,
-.share-buttons a:hover {
-  background: var(--color-bg);
-}
-
 /* ---------------- Survey period badge ---------------- */
 .survey-badge {
   background: var(--color-navy);

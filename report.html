@@ -81,54 +81,13 @@
           ? `<a href="report.html?month=${adjacent.older.slug}">← ${adjacent.older.title}</a>`
           : `<span class="disabled">Oldest report</span>`;
 
-        const pageUrl = window.location.href;
-        const shareText = encodeURIComponent(
-          report.title + " Market Report — LiveYARCOBR",
-        );
-
         bodyMount.innerHTML = `
       <embed src="${report.pdf}" type="application/pdf" class="pdf-frame" />
       <div class="report-nav">
         ${olderLink}
         ${newerLink}
       </div>
-      <div class="share-row">
-        <h4>Share this Report</h4>
-        <div class="share-buttons">
-          <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}" target="_blank" rel="noopener">Facebook</a>
-          <a href="mailto:?subject=${shareText}&body=${encodeURIComponent(pageUrl)}">Email</a>
-          <button id="copy-link-btn" type="button">Copy Link</button>
-          <button id="print-btn" type="button">Print</button>
-        </div>
-      </div>
     `;
-
-        document
-          .getElementById("print-btn")
-          .addEventListener("click", function () {
-            window.print();
-          });
-
-        document
-          .getElementById("copy-link-btn")
-          .addEventListener("click", function () {
-            const btn = document.getElementById("copy-link-btn");
-            navigator.clipboard
-              .writeText(pageUrl)
-              .then(function () {
-                const original = btn.textContent;
-                btn.textContent = "Copied!";
-                setTimeout(function () {
-                  btn.textContent = original;
-                }, 1800);
-              })
-              .catch(function () {
-                alert(
-                  "Could not copy automatically — here is the link:\n" +
-                    pageUrl,
-                );
-              });
-          });
       });
     </script>
   </body>
