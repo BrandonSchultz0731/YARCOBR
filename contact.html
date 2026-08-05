@@ -344,7 +344,13 @@
 
             <!-- Shown only after Web3Forms confirms it accepted the
                  submission. It may say "sent" because by then it has been. -->
-            <div class="form-status" id="form-status" role="status" hidden>
+            <div
+              class="form-status"
+              id="form-status"
+              role="status"
+              tabindex="-1"
+              hidden
+            >
               <div class="form-status-head">
                 <svg
                   width="17"
@@ -384,6 +390,7 @@
               class="form-status form-status-error"
               id="form-error"
               role="alert"
+              tabindex="-1"
               hidden
             >
               <div class="form-status-head">
@@ -448,7 +455,12 @@
                   stroke-width="1.6"
                 />
               </svg>
-              Your information is kept private and will never be shared.
+              <!-- Submissions now pass through Web3Forms on their way to
+                   Daniel's inbox, so the old "never shared" claim no longer
+                   held. This says what is actually promised: the details are
+                   used to reply, and nothing else. -->
+              We only use your details to reply to you — never for a mailing
+              list, and never sold to anyone.
             </p>
           </form>
         </div>
@@ -629,6 +641,14 @@
 
       function show(panel) {
         panel.hidden = false;
+
+        // Move focus into the result. The live-region role alone is not
+        // dependable — several screen readers miss a region that was `hidden`
+        // when the page loaded — and focus also puts a keyboard user at the
+        // outcome rather than back on a button whose label just changed.
+        // preventScroll leaves the smooth scroll below to do the moving.
+        if (panel.focus) panel.focus({ preventScroll: true });
+
         if (panel.scrollIntoView) {
           panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }

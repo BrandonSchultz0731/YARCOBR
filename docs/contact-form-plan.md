@@ -3,9 +3,9 @@
 Working document. Nothing here is built yet — this is the agreed approach and
 the checklist to get there.
 
-**Status:** in progress on `feature/contact-form-web3forms`. Phases 1–2 done.
-Building against Brandon's dev key; the production key swap is still
-outstanding.
+**Status:** in progress on `feature/contact-form-web3forms`. Phases 1–3 done;
+Phase 4 (verification) next. Building against Brandon's dev key; the production
+key swap is still outstanding.
 
 ---
 
@@ -151,18 +151,25 @@ Two things learned by probing the live endpoint:
   end-to-end test therefore has to run in a real browser; a shell one-liner
   will fail for reasons that have nothing to do with our code.
 
-## Phase 3 — Copy and accessibility
+## Phase 3 — Copy and accessibility ✅
 
 - [x] Rewrite the confirmation so it says _sent_ — truthfully, which is the
       entire point of this work. Done in Phase 2 rather than left for later:
       the old wording ("we handed it to your email app") became false the
       moment the `fetch()` landed, and shipping a knowingly wrong message
       across two commits is worse than moving one item early.
-- [ ] Move focus to the confirmation on success so screen readers announce it.
-- [ ] Revisit "Your information is kept private and will never be shared" now
-      that submissions pass through a third party. Probably still defensible,
-      but look at it deliberately.
-- [ ] Leave the email buttons and Copy address exactly as they are — the
+- [x] Move focus to the confirmation on success so screen readers announce it.
+      Done for the failure panel too, which is where the recovery options are.
+      The live-region roles stay as a backstop: several screen readers miss a
+      region that was `hidden` at page load, so focus is the dependable half
+      and the role is the cheap insurance.
+- [x] Revisit "Your information is kept private and will never be shared" now
+      that submissions pass through a third party. It did not survive the
+      look — Web3Forms now handles every submission, so an unqualified "never
+      shared" was no longer true. Replaced with what is actually promised:
+      _"We only use your details to reply to you — never for a mailing list,
+      and never sold to anyone."_
+- [x] Leave the email buttons and Copy address exactly as they are — the
       redundant path if the service is ever down.
 
 ## Phase 4 — Verification
@@ -198,9 +205,12 @@ catches a dead backend before a lost lead does.
    recipients ("co-workers") is a PRO feature, so not available on free. On
    the free tier the workaround is a Gmail filter on Daniel's side that
    auto-forwards YARCOBR submissions to Matt. Decide whether that's wanted.
-2. **The no-JS path.** Without JavaScript the browser navigates to Web3Forms'
-   own success page, which is off-brand. Option: point it at a simple
-   thank-you page on this site instead. Worth it, or acceptable?
+2. ~~**The no-JS path.**~~ **Decided: leave it.** Without JavaScript the
+   browser navigates to Web3Forms' own success page rather than staying here.
+   Off-brand, but it works, and nobody hits it in normal use — the in-page
+   "Message sent" banner covers everyone with JavaScript on. Not worth a
+   thank-you page and the extra `redirect` field to maintain. Revisit only if
+   the analytics ever show real traffic landing there.
 3. **Autoresponder to the visitor?** Looks like a paid feature on the free
    tier — verify. Good reassurance for this audience if cheap.
 

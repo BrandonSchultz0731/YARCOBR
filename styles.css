@@ -1311,6 +1311,13 @@ button:focus-visible {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* These panels are focused programmatically so screen readers announce the
+   outcome; they are never reached by Tab. A tinted box that just appeared and
+   scrolled itself into view is already the loudest thing on screen, so it does
+   not also need a focus ring. */
+.form-status:focus {
+  outline: none;
+}
 /* Failure variant. Same panel, tinted — the difference has to be legible
    without relying on colour alone, so the heading wording and the warning
    glyph carry it too. */
