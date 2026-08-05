@@ -3,8 +3,9 @@
 Working document. Nothing here is built yet — this is the agreed approach and
 the checklist to get there.
 
-**Status:** in progress on `feature/contact-form-web3forms`. Phase 1 done.
-Building against a dev key; the production key swap is still outstanding.
+**Status:** in progress on `feature/contact-form-web3forms`. Phases 1–2 done.
+Building against Brandon's dev key; the production key swap is still
+outstanding.
 
 ---
 
@@ -74,9 +75,7 @@ That makes a two-key workflow the right sequence:
       bad-key errors, double-submit) then lands in Brandon's inbox instead of
       cluttering Daniel's with a dozen test messages.
 - [x] Hand over the dev key; build and test against it. In the page as
-      `9bd04844-…`. **Confirm this is bound to Brandon's address, not
-      Daniel's** — if it is already Daniel's, every test below lands in his
-      inbox and the swap step is moot.
+      `9bd04844-…`, confirmed bound to Brandon's account.
 - [ ] **Production key — Daniel's email.** Generate a second key at go-live
       and swap the one line. Keys are free, so this costs nothing.
 - [ ] Re-run one real end-to-end test after the swap — a passing test on the
@@ -122,26 +121,43 @@ the compensating control.
       and keeping the old slug in `data-key`, which is what the "Other Ways We
       Can Help" links target.
 
-> **The branch is mid-refactor after Phase 1 and must not ship on its own.**
-> The form now POSTs natively _and_ the old `mailto:` listener still runs, so a
-> submit does both. Phase 2 replaces that listener and closes the gap.
+> Phase 1 alone left the branch mid-refactor — the form POSTed natively _and_
+> the old `mailto:` listener still ran. Phase 2 closed that.
 
-## Phase 2 — Submission logic
+## Phase 2 — Submission logic ✅
 
-- [ ] Replace the `mailto:` handler with a `fetch()` POST; check the JSON
+- [x] Replace the `mailto:` handler with a `fetch()` POST; check the JSON
       response.
-- [ ] Add the three states the form lacks today — sending (button disabled,
+- [x] Add the three states the form lacks today — sending (button disabled,
       label changes), sent, failed. Currently there is only one.
-- [ ] Guard against double submission while a request is in flight.
-- [ ] Handle both failure modes: network error, and a response with
+- [x] Guard against double submission while a request is in flight. The
+      disabled button is not enough on its own: Enter in a text field submits
+      the form without touching it, so an in-flight flag does the real work.
+- [x] Handle both failure modes: network error, and a response with
       `success: false`. Both fall back to the existing copy-message path.
-- [ ] Reset the form on success.
+      A third was found and covered — a response whose body will not parse as
+      JSON.
+- [x] Reset the form on success. Deliberately _not_ on failure: the visitor
+      keeps what they typed, and the copy button hands it back.
+
+Two things learned by probing the live endpoint:
+
+- **A rejection comes back as a non-2xx status with a JSON body.** An invalid
+  key returns HTTP 403 and `{"success": false, "message": …}`. So the response
+  must be parsed regardless of `response.ok` — branching on the status alone
+  would throw away the reason.
+- **Server-side requests are blocked on the free tier.** `curl` with no Origin
+  gets _"This method is not allowed. Use our API in client side"_. Phase 4's
+  end-to-end test therefore has to run in a real browser; a shell one-liner
+  will fail for reasons that have nothing to do with our code.
 
 ## Phase 3 — Copy and accessibility
 
-- [ ] Rewrite the confirmation so it says _sent_ — truthfully, which is the
-      entire point of this work. Current wording deliberately avoids the word
-      because nothing is sent today.
+- [x] Rewrite the confirmation so it says _sent_ — truthfully, which is the
+      entire point of this work. Done in Phase 2 rather than left for later:
+      the old wording ("we handed it to your email app") became false the
+      moment the `fetch()` landed, and shipping a knowingly wrong message
+      across two commits is worse than moving one item early.
 - [ ] Move focus to the confirmation on success so screen readers announce it.
 - [ ] Revisit "Your information is kept private and will never be shared" now
       that submissions pass through a third party. Probably still defensible,

@@ -17,6 +17,9 @@
   --color-ink: #1c2733;
   --color-ink-muted: #5b6675;
   --color-border: #dfe4ee;
+  /* Only used to mark a failed action. Brick rather than a signal red so it
+     reads as serious without shouting against the dusty gold. */
+  --color-alert: #9d3b33;
 
   /* Extra chart colors (Community Pulse donuts) — kept in the same family as the brand palette */
   --chart-a: var(--color-navy);
@@ -1308,9 +1311,27 @@ button:focus-visible {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* Failure variant. Same panel, tinted — the difference has to be legible
+   without relying on colour alone, so the heading wording and the warning
+   glyph carry it too. */
+.form-status-error {
+  background: #fbf3f2;
+  border-color: #e8d2cf;
+}
+.form-status-error .form-status-head {
+  color: var(--color-alert);
+}
+.form-status-error .form-status-head svg {
+  color: var(--color-alert);
+}
 .btn.is-copied {
   border-color: var(--color-gold-dark);
   color: var(--color-gold-dark);
+}
+/* The send button while a request is in flight. */
+#send-message-btn[disabled] {
+  opacity: 0.65;
+  cursor: progress;
 }
 
 /* Panel heading with a leading icon — replaces the emoji that used to sit

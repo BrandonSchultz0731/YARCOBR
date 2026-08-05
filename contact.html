@@ -342,10 +342,8 @@
               Send Message
             </button>
 
-            <!-- Shown after submit. This site is static and has no server, so
-                 the form hands the message to the visitor's email app rather
-                 than sending it. The wording says exactly that — it must never
-                 claim a message was sent, because nothing has been. -->
+            <!-- Shown only after Web3Forms confirms it accepted the
+                 submission. It may say "sent" because by then it has been. -->
             <div class="form-status" id="form-status" role="status" hidden>
               <div class="form-status-head">
                 <svg
@@ -370,19 +368,59 @@
                     stroke-linejoin="round"
                   />
                 </svg>
-                Your message is ready to send
+                Message sent
               </div>
               <p>
-                We handed it to your email app with everything filled in — press
-                send there and it comes straight to Daniel.
+                Thanks — it's with Daniel now. He'll reply to the email address
+                you gave us, usually within a day.
+              </p>
+            </div>
+
+            <!-- The failure path. A form backend can go down without anyone
+                 noticing, so this has to hand the visitor a way through rather
+                 than an apology: their message, ready to copy, and two
+                 addresses that do not depend on this site working. -->
+            <div
+              class="form-status form-status-error"
+              id="form-error"
+              role="alert"
+              hidden
+            >
+              <div class="form-status-head">
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M12 7.5v5m0 3.5h.01"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                We couldn't send your message
+              </div>
+              <p>
+                Nothing reached Daniel. Your message is still here — copy it and
+                email it across, or call and skip the form entirely.
               </p>
               <p class="form-status-fallback">
-                Nothing opened? Copy the message and email it to
                 <a href="mailto:dmschultz1964@gmail.com">
                   dmschultz1964@gmail.com
                 </a>
+                · 561-843-7252
               </p>
-              <button type="button" class="btn btn-secondary" id="copy-message">
+              <button type="button" class="btn btn-secondary copy-message">
                 Copy message
               </button>
             </div>
@@ -560,54 +598,97 @@
         });
       });
 
-      // Holds the last composed message so "Copy message" can offer it if the
-      // visitor's email app never opened.
+      // Holds the last composed message so "Copy message" can offer it back if
+      // the send failed. Captured before the form is reset.
       let lastMessage = "";
 
-      document
-        .getElementById("contact-form")
-        .addEventListener("submit", function () {
-          const name = document.getElementById("name").value;
-          const email = document.getElementById("email").value;
-          const phone = document.getElementById("phone").value;
-          const message = document.getElementById("message").value;
+      const form = document.getElementById("contact-form");
+      const sentPanel = document.getElementById("form-status");
+      const errorPanel = document.getElementById("form-error");
+      const sendButton = document.getElementById("send-message-btn");
 
-          // Use the option's visible label ("Schedule a Showing"), not its
-          // value ("showing"), so the email subject reads naturally.
-          const subjectSelect = document.getElementById("subject");
-          const subjectLabel =
-            subjectSelect.options[subjectSelect.selectedIndex].text;
+      // Plain-text rendering of the form, used only as the copy-and-email
+      // fallback when the send fails.
+      function composeMessage() {
+        const phone = document.getElementById("phone").value;
+        const lines = [
+          "Name: " + document.getElementById("name").value,
+          "Email: " + document.getElementById("email").value,
+        ];
+        // Phone is optional — only include the line when one was entered.
+        if (phone.trim()) lines.push("Phone: " + phone);
+        return (
+          "Subject: " +
+          document.getElementById("subject").value +
+          "\n\n" +
+          lines.join("\n") +
+          "\n\n" +
+          document.getElementById("message").value
+        );
+      }
 
-          // Phone is optional — only include the line when one was entered.
-          const lines = ["Name: " + name, "Email: " + email];
-          if (phone.trim()) lines.push("Phone: " + phone);
+      function show(panel) {
+        panel.hidden = false;
+        if (panel.scrollIntoView) {
+          panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }
 
-          const subject = "YARCOBR Contact — " + subjectLabel;
-          const body = lines.join("\n") + "\n\n" + message;
-          lastMessage = "Subject: " + subject + "\n\n" + body;
+      // Set while a request is in flight. The disabled button stops the
+      // obvious double-click, but Enter in a text field submits the form
+      // without touching the button, so the flag is what actually guards it.
+      let sending = false;
 
-          // Reveal the confirmation first, hand off to the mail app second,
-          // scroll last — in that order so a failure in any step can't stop
-          // the ones that matter more.
-          const status = document.getElementById("form-status");
-          status.hidden = false;
+      form.addEventListener("submit", function (event) {
+        // The browser has already run its own required/type validation by the
+        // time this fires; we only get here with a valid form.
+        event.preventDefault();
+        if (sending) return;
 
-          window.location.href =
-            "mailto:dmschultz1964@gmail.com?subject=" +
-            encodeURIComponent(subject) +
-            "&body=" +
-            encodeURIComponent(body);
+        // Snapshot before anything can reset the fields.
+        lastMessage = composeMessage();
+        const payload = new FormData(form);
 
-          if (status.scrollIntoView) {
-            status.scrollIntoView({ behavior: "smooth", block: "nearest" });
-          }
+        sending = true;
+        sendButton.disabled = true;
+        sendButton.textContent = "Sending…";
+        sentPanel.hidden = true;
+        errorPanel.hidden = true;
+
+        fetch(form.getAttribute("action"), {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: payload,
+        })
+          .then(function (response) {
+            // Web3Forms answers with JSON on both success and rejection, and
+            // uses a non-2xx status for the latter — so read the body either
+            // way rather than trusting response.ok alone.
+            return response.json();
+          })
+          .then(function (data) {
+            if (!data || !data.success) throw new Error("rejected");
+            form.reset();
+            show(sentPanel);
+          })
+          .catch(function () {
+            // One handler for every way this fails — offline, DNS, CORS, a
+            // bad key, a spent quota. The visitor needs the same thing in all
+            // of them: their message back and another way to reach Daniel.
+            show(errorPanel);
+          })
+          .then(function () {
+            sending = false;
+            sendButton.disabled = false;
+            sendButton.textContent = "Send Message";
+          });
+      });
+
+      document.querySelectorAll(".copy-message").forEach(function (button) {
+        button.addEventListener("click", function () {
+          copyText(lastMessage, button, "Copied ✓");
         });
-
-      document
-        .getElementById("copy-message")
-        .addEventListener("click", function () {
-          copyText(lastMessage, this, "Copied ✓");
-        });
+      });
     </script>
   </body>
 </html>
