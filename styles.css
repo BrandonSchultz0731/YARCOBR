@@ -17,6 +17,9 @@
   --color-ink: #1c2733;
   --color-ink-muted: #5b6675;
   --color-border: #dfe4ee;
+  /* Only used to mark a failed action. Brick rather than a signal red so it
+     reads as serious without shouting against the dusty gold. */
+  --color-alert: #9d3b33;
 
   /* Extra chart colors (Community Pulse donuts) — kept in the same family as the brand palette */
   --chart-a: var(--color-navy);
@@ -871,6 +874,82 @@ button:focus-visible {
   color: var(--color-ink-muted);
 }
 
+/* Contact page variant. About keeps the centred circle; here the card carries
+   phone, email, address and two buttons, so it is laid out as an identity row
+   across the top with the details spanning the full width beneath. The earlier
+   two-column version put an 88px circle in a column ~250px of which was empty,
+   which is what made the photos read as small. */
+.contact-card {
+  text-align: left;
+}
+.contact-card-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.contact-card h3 {
+  margin-bottom: 1px;
+}
+.contact-card .company {
+  margin-top: 2px;
+}
+/* Bigger and squarer than the circle on About: these are the two people a
+   resident is deciding whether to phone, so the photo is worth the space.
+   4:5 is chosen against the source files — it is Matt's native frame exactly,
+   and takes only the outer fifth off Daniel's square one, so neither crops
+   into the face. */
+.avatar-portrait {
+  width: 132px;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  /* Tighter than the card's 10px that contains it — a nested corner reading
+     rounder than its container looks like a mistake, and the harder corner
+     also sells "square" rather than "circle with the edges filed off". */
+  border-radius: 8px;
+  margin: 0;
+  flex-shrink: 0;
+  font-size: 2rem;
+  /* Both headshots have pale backgrounds that would otherwise dissolve into
+     the white card. */
+  border: 1px solid var(--color-border);
+}
+/* The doubled class is load-bearing, not a typo. `.avatar img` sets a 50%
+   radius further down this file, and a plain `.avatar-portrait img` ties it on
+   specificity and loses on source order — which renders the photo as a circle
+   masked inside a square, with the navy fallback background showing in the
+   corners. Do not simplify this back to one class. */
+.avatar.avatar-portrait img {
+  border-radius: inherit;
+}
+/* About's cards keep their centred composition — they are introductions, not a
+   utility list, and there is no detail column to fill. Only the photo changes,
+   so the same two people are not shown in two different treatments across the
+   site. Doubled class for the same source-order reason as above. */
+.avatar-portrait.avatar-centered {
+  width: 170px;
+  margin: 0 auto 16px;
+  font-size: 2.6rem;
+}
+@media (max-width: 560px) {
+  .avatar-portrait.avatar-centered {
+    width: 140px;
+  }
+}
+/* Last thing in the card, so the global `p` bottom margin would otherwise sit
+   on top of the card's own padding and leave it visibly bottom-heavy. */
+.team-card .tagline {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+}
+/* Narrow phones: the photo would otherwise leave the name and company under
+   90px to wrap into. */
+@media (max-width: 560px) {
+  .avatar-portrait {
+    width: 104px;
+  }
+}
+
 .contact-panel {
   background: var(--color-white);
   border: 1px solid var(--color-border);
@@ -1246,6 +1325,12 @@ button:focus-visible {
   resize: vertical;
   min-height: 100px;
 }
+/* Spam honeypot. `display: none` keeps it out of the layout, out of the tab
+   order, and unreadable by screen readers, while leaving it a real checkbox in
+   the DOM for a bot to find and tick. Nothing may ever make this visible. */
+.honeypot {
+  display: none;
+}
 .form-note {
   font-size: 0.78rem;
   color: var(--color-ink-muted);
@@ -1302,9 +1387,34 @@ button:focus-visible {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* These panels are focused programmatically so screen readers announce the
+   outcome; they are never reached by Tab. A tinted box that just appeared and
+   scrolled itself into view is already the loudest thing on screen, so it does
+   not also need a focus ring. */
+.form-status:focus {
+  outline: none;
+}
+/* Failure variant. Same panel, tinted — the difference has to be legible
+   without relying on colour alone, so the heading wording and the warning
+   glyph carry it too. */
+.form-status-error {
+  background: #fbf3f2;
+  border-color: #e8d2cf;
+}
+.form-status-error .form-status-head {
+  color: var(--color-alert);
+}
+.form-status-error .form-status-head svg {
+  color: var(--color-alert);
+}
 .btn.is-copied {
   border-color: var(--color-gold-dark);
   color: var(--color-gold-dark);
+}
+/* The send button while a request is in flight. */
+#send-message-btn[disabled] {
+  opacity: 0.65;
+  cursor: progress;
 }
 
 /* Panel heading with a leading icon — replaces the emoji that used to sit
