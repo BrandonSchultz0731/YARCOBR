@@ -1331,6 +1331,26 @@ button:focus-visible {
 .honeypot {
   display: none;
 }
+
+/* hCaptcha's widget is a fixed 303px and does not reflow. That is wider than
+   the form column on a small phone, so it is scaled down rather than allowed
+   to push the page sideways. transform-origin keeps it flush left, and the
+   wrapper's height is corrected to match so it doesn't leave a gap. */
+.captcha-field {
+  margin: 4px 0 16px;
+}
+@media (max-width: 430px) {
+  .captcha-field .h-captcha {
+    transform: scale(0.85);
+    transform-origin: 0 0;
+    height: 66px;
+  }
+}
+.captcha-hint {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  color: var(--color-alert);
+}
 .form-note {
   font-size: 0.78rem;
   color: var(--color-ink-muted);

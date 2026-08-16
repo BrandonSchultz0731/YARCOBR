@@ -320,9 +320,35 @@
                 required
               ></textarea>
             </div>
+            <!-- Web3Forms' client script finds [data-captcha] and fills in its
+                 own shared hCaptcha site key, so no key is hard-coded here.
+                 hCaptcha injects a hidden `h-captcha-response` field into this
+                 form once solved, which the FormData below picks up on its own.
+
+                 This exists because the honeypot stopped being enough: a real
+                 spam submission on 2026-08-10 stepped around it and posted a
+                 valid Subject value, so it came from a browser, not a script. -->
+            <div class="captcha-field">
+              <div class="h-captcha" data-captcha="true"></div>
+              <p class="captcha-hint" id="captcha-hint" role="alert" hidden>
+                Please complete the check above before sending.
+              </p>
+            </div>
+
             <button type="submit" class="btn btn-primary" id="send-message-btn">
               Send Message
             </button>
+
+            <noscript>
+              <p class="form-note">
+                This form needs JavaScript switched on to send. If you'd rather
+                not, email
+                <a href="mailto:dmschultz1964@gmail.com">
+                  dmschultz1964@gmail.com
+                </a>
+                or call 561-843-7252 — both reach Daniel directly.
+              </p>
+            </noscript>
 
             <!-- Shown only after Web3Forms confirms it accepted the
                  submission. It may say "sent" because by then it has been. -->
@@ -542,6 +568,10 @@
     <div id="site-footer"></div>
 
     <script src="js/components.js"></script>
+    <!-- Loads hCaptcha and renders any [data-captcha] widget. Inspected before
+         adding: it binds no submit handler, so it does not interfere with the
+         fetch() below. -->
+    <script src="https://web3forms.com/client/script.js" async defer></script>
     <script>
       renderHeader("contact");
       renderFooter();
@@ -647,6 +677,19 @@
         event.preventDefault();
         if (sending) return;
 
+        // hCaptcha adds this field only once the check is solved. Web3Forms
+        // rejects a submission without it, but that rejection is unreadable to
+        // us — its error responses carry no CORS headers, so fetch rejects
+        // without a status. Catching it here is the only way the visitor gets
+        // "finish the check" instead of a flat "we couldn't send your message".
+        const captchaToken = form.querySelector('[name="h-captcha-response"]');
+        const captchaHint = document.getElementById("captcha-hint");
+        if (!captchaToken || !captchaToken.value) {
+          captchaHint.hidden = false;
+          return;
+        }
+        captchaHint.hidden = true;
+
         // Snapshot before anything can reset the fields.
         lastMessage = composeMessage();
         const payload = new FormData(form);
@@ -683,6 +726,11 @@
             sending = false;
             sendButton.disabled = false;
             sendButton.textContent = "Send Message";
+            // An hCaptcha token is single use. Reset on failure as well as on
+            // success: we cannot tell whether the token was spent before the
+            // request failed, and a reused one is rejected, which would turn
+            // one failed send into an unexplainable second.
+            if (window.hcaptcha) window.hcaptcha.reset();
           });
       });
 

@@ -65,7 +65,19 @@ Things worth knowing before changing it:
   so the email itself is the only durable record. If it gets spam-filtered the
   lead is gone.
 - **`botcheck` is a spam honeypot** — a checkbox hidden by CSS that real
-  people never see. Nothing may make it visible.
+  people never see. Nothing may make it visible. It is no longer sufficient on
+  its own: a real spam submission in August 2026 stepped around it.
+- **hCaptcha guards the form.** The `<div class="h-captcha" data-captcha="true">`
+  is rendered by `web3forms.com/client/script.js`, which supplies Web3Forms'
+  shared site key — there is no key to manage here. **It only actually blocks
+  anything if hCaptcha is switched on for this form in the Web3Forms
+  dashboard**; without that the widget is decoration. The page checks for the
+  solved token before sending, because Web3Forms' rejection is invisible to
+  JavaScript (its error responses carry no CORS headers) and the visitor would
+  otherwise see a generic failure for an unticked box.
+- **The form no longer works with JavaScript off.** hCaptcha needs it. A
+  `<noscript>` block points those visitors at the email address and phone
+  number instead.
 - The email buttons and "Copy address" beside them are the deliberate fallback
   for when the service is down. Keep them.
 

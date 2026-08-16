@@ -1,11 +1,12 @@
 # Plan: make the contact form actually send
 
-Working document. Nothing here is built yet — this is the agreed approach and
-the checklist to get there.
+Working document. Kept as a record of what was decided and why, including the
+bits that turned out to be wrong.
 
-**Status:** built and verified on `feature/contact-form-web3forms`; Phases 1–4
-done. **Blocked on the production key** — the page still carries Brandon's dev
-key and must not merge until that is swapped for one bound to Daniel's email.
+**Status: live.** Phases 0–5 shipped and the form sends to Daniel on the
+production key `24e60b45-…`. Phase 6 (hCaptcha, added after real spam arrived)
+is built on `feature/hcaptcha` and **blocked on switching hCaptcha on in the
+Web3Forms dashboard** — until that is done the widget is decoration.
 
 ---
 
@@ -76,9 +77,10 @@ That makes a two-key workflow the right sequence:
       cluttering Daniel's with a dozen test messages.
 - [x] Hand over the dev key; build and test against it. In the page as
       `9bd04844-…`, confirmed bound to Brandon's account.
-- [ ] **Production key — Daniel's email.** Generate a second key at go-live
-      and swap the one line. Keys are free, so this costs nothing.
-- [ ] Re-run one real end-to-end test after the swap — a passing test on the
+- [x] **Production key — Daniel's email.** Generate a second key at go-live
+      and swap the one line. Keys are free, so this costs nothing. Live as
+      `24e60b45-…`; the dev key above is retired.
+- [x] Re-run one real end-to-end test after the swap — a passing test on the
       dev key proves nothing about the production one.
 - [ ] **After go-live:** have Daniel whitelist the sender in Gmail.
       Notifications come from Web3Forms' domain, not from the visitor, so
@@ -98,8 +100,13 @@ the compensating control.
 
 > The access key lives in the page's HTML and will be publicly visible in this
 > repo. That is by design — it identifies the destination, it is not a
-> password. It does mean anyone can read it and POST to it, so enable domain
-> restriction if Web3Forms offers it, and keep the honeypot.
+> password. It does mean anyone can read it and POST to it, so keep the
+> honeypot.
+>
+> **Correction:** an earlier version of this line said to "enable domain
+> restriction if Web3Forms offers it." It does, but **only on PRO** — it is not
+> available to us. It would not have helped with the spam we actually got
+> either, which was submitted through the real form on the real domain.
 
 ## Phase 1 — Form markup ✅
 
@@ -191,10 +198,22 @@ All five run by hand in a real browser against the dev key, all passed.
       in Phase 5 — the emulator can't show the on-screen keyboard covering the
       Send button.
 
-Automated alongside these, and worth re-running after any edit to the form:
-60 assertions in the scratchpad checks — markup/payload, the fetch path
-(success, rejection, network failure, unparseable body, triple-submit,
-honeypot), and focus/copy.
+These were also covered by a jsdom suite run outside the repo. **Do not rely on
+finding it** — it lived in a temp directory and has been cleaned twice. The
+suite is deliberately not committed: it needs `jsdom`, and this project has no
+package.json or build step by design, which is worth more than the convenience.
+Anyone re-testing should expect to rewrite it. What it asserted, and what a
+replacement should cover:
+
+- The payload a native POST would send: every field named, honeypot absent when
+  unticked, subject readable.
+- The `fetch` path: success, backend rejection, network failure, a body that
+  will not parse, and three submits fired while one is in flight.
+- Focus landing on the right panel in both outcomes, and the copy fallback
+  returning what was typed.
+- With hCaptcha: an unsolved or empty token blocking the request before the
+  network, the token reaching the payload, and the widget resetting on both
+  success and failure.
 
 ## Phase 5 — Ship
 
@@ -240,6 +259,60 @@ catches a dead backend before a lost lead does.
 3. **Autoresponder to the visitor?** Looks like a paid feature on the free
    tier — verify. Good reassurance for this audience if cheap.
 
+## Phase 6 — hCaptcha (added after go-live)
+
+On 10 Aug 2026 a spam submission arrived that **stepped around the honeypot**
+and posted a valid Subject value, from a Bharti Airtel mobile IP in India
+(`2401:4900::/32`). It parsed the real form in a real browser, so it was not a
+naive script. Offshore SEO lead-gen — the most common thing that happens to any
+public contact form.
+
+Ruled out, and why:
+
+- Hardening the honeypot — it was already stepped around.
+- Domain restriction — PRO, and they used the real form on the real domain.
+- IP blocking — mobile carrier IPv6, rotates constantly.
+- A submit cooldown — that addresses flooding; this was one message.
+- Blocking messages containing links — the spam contained no link.
+
+Free-tier options are server-side spam check (already on), honeypot (already
+on, defeated), and **hCaptcha**. reCAPTCHA is PRO.
+
+- [x] Add the widget and Web3Forms' client script. The script was read before
+      adding: it binds no submit handler, so it does not fight the `fetch()`.
+- [x] Check for the solved token before sending. Required, not belt-and-braces:
+      Web3Forms' rejection is unreadable to JavaScript (no CORS headers on
+      error responses), so without this the visitor gets a flat "we couldn't
+      send your message" for an unticked box.
+- [x] Reset the widget after every send, success or failure — the token is
+      single use and we cannot tell whether a failed request spent it.
+- [x] Scale the widget on narrow phones. hCaptcha's box is a fixed 303px and
+      does not reflow, which would otherwise push the page sideways.
+- [x] `<noscript>` fallback. **This reverses open decision 2:** hCaptcha needs
+      JavaScript, so the native POST path no longer works. Those visitors are
+      now pointed at the email address and phone number instead.
+- [ ] **Enable hCaptcha for this form in the Web3Forms dashboard.** Blocks
+      everything. Until this is done the widget is decoration — Web3Forms never
+      verifies the token and the form is exactly as open as before.
+- [ ] **Prove enforcement is on.** Solve the captcha, then strip the
+      `h-captcha-response` value in DevTools and submit past the local guard
+      (or call `fetch` from the console without it). Rejected means the server
+      is checking. Accepted means the dashboard toggle did not take and all of
+      the above is theatre.
+- [ ] Have an older resident try it on their own device before trusting it as
+      the only way in. Most people get a plain "I am human" checkbox, but
+      hCaptcha can escalate to image puzzles, and 29.6% of residents are 80+.
+
+What this does **not** stop: commercial solving services (~$1–3 per thousand)
+will get through, as they will for anyone. Note also that Web3Forms issues one
+shared hCaptcha site key to all free users, so a token solved on another
+Web3Forms site could in principle be replayed here unless they check the
+hostname `siteverify` returns — unverified, and limited by single-use tokens
+that expire in about two minutes.
+
+The client-side guard is **UX, not security**. It is bypassable by design and
+that is fine; the control is Web3Forms verifying the token server-side.
+
 ## Risks
 
 - **Free tier terms can change.** Mitigation is already on the page: visible
@@ -247,8 +320,9 @@ catches a dead backend before a lost lead does.
   visitors can't reach you.
 - **30-day retention means email is the only durable record.** If Gmail
   spam-filters a notification, the lead is gone. Hence the whitelist step.
-- **Spam consumes quota.** Honeypot plus domain restriction should keep this
-  well under 250/month.
+- **Spam consumes quota.** The honeypot alone did not hold — see Phase 6.
+  Volume is still far below 250/month; the cost is Daniel's attention, not the
+  quota.
 - **Resident PII passes through a third party** — names, emails, phone
   numbers. Normal practice, but a knowing choice rather than an accident.
 
