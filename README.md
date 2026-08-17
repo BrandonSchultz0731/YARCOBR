@@ -15,6 +15,7 @@ about.html                          About Us page
 contact.html                        Contact Us page (separate from About as of this update)
 styles.css                          Every page's colors, fonts, and component styles
 js/components.js                    Shared header/nav + footer, injected into every page
+js/motion.js                        Scroll reveals, scroll indicator, header scrolled state
 js/reports-loader.js                Fetches reports.json and provides lookup helpers
 js/survey-loader.js                 Fetches survey.json (PDF link + month label only — see note below)
 reports.json / survey.json          Auto-generated. Do not edit by hand — see below.
@@ -201,8 +202,70 @@ probably too high-resolution — compress with:
 - Mac Preview: File → Export → Quartz Filter → Reduce File Size
 - Adobe Acrobat: File → Save As Other → Reduced Size PDF
 
-## Colors & fonts
+## Colors, fonts & motion
 
-All brand values live at the top of `styles.css` as CSS variables
-(`--color-navy`, `--color-gold`, `--font-heading`, etc.). Change a value
-there and every page updates.
+All brand values live at the top of `styles.css` as CSS variables. Change a
+value there and every page updates. The palette is sampled from the
+community's own aerial photograph rather than picked off a real-estate
+template:
+
+| Variable   | What it is                                                                             |
+| ---------- | -------------------------------------------------------------------------------------- |
+| `--deep`   | The Atlantic at the horizon. Every dark band.                                          |
+| `--harbor` | Primary action colour — buttons, links, chart slice A.                                 |
+| `--shoal`  | The turquoise shallows. Accents on dark only; too light for text on white.             |
+| `--clay`   | Barrel-tile terracotta. Deliberately rare — the active nav marker, one CTA per screen. |
+| `--paper`  | Sun-bleached stucco. The page background.                                              |
+
+Type is **Fraunces** for display, **Archivo** for body and UI, and **IBM Plex
+Mono** for the small uppercase data labels. They load with `<link>` tags in
+each page's `<head>` rather than an `@import` in the stylesheet, so they
+download in parallel with the CSS instead of queueing behind it. Adding a page
+means copying those three `<link>` tags across.
+
+### The waterline
+
+The recurring device is `.rule` — a labelled hairline with soundings ticked
+along it, opening each major section:
+
+```html
+<div class="rule">
+  <span class="rule-label">Archive</span>
+  <span class="rule-line" aria-hidden="true"></span>
+  <span class="rule-value">3 reports</span>
+</div>
+```
+
+Give it something true to say. It carries the current report's month, the
+number of reports in the archive, the survey period — not a slogan. Over a
+photograph it reorders itself so both pieces of text stay in the darkened left
+column; see the comment beside `.hero .rule-value` in the stylesheet.
+
+### Motion
+
+`js/motion.js` is loaded from `<head>` **without `defer`** on purpose, and the
+comment at the top of that file explains why — deferring it makes every
+section flash into view and then hide itself.
+
+Anything with `class="reveal"` fades up when it scrolls into view. A container
+with `data-stagger` gets that class applied to each of its children
+automatically, numbered so they arrive one after another.
+
+Two things must stay true:
+
+- **The `.reveal` styles only apply inside `.js-motion`**, a class that
+  `motion.js` adds to `<html>` only when JavaScript is running _and_ the reader
+  has not asked for reduced motion. With either of those false, every element
+  is simply visible. Content must never be able to strand itself at opacity 0.
+- **Content injected after page load has to be re-scanned** — call
+  `window.Motion.scan(container)` after rendering, as `market-reports.html`
+  does. Cards built from `reports.json` did not exist when the observer was
+  set up.
+
+### One trap worth knowing
+
+The `hidden` attribute is only `display: none` in the _browser's_ default
+stylesheet, and any author rule beats that no matter how specific. Several
+elements toggle with `.hidden = true/false` while also being `.btn` or
+`.cta-bar`, which set `display` — so `styles.css` carries an explicit
+`[hidden] { display: none !important }`. Do not remove it.
