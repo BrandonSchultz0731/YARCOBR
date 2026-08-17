@@ -8,165 +8,267 @@
       name="description"
       content="Monthly real estate market reports and community insights for the residents of Yacht &amp; Racquet Club of Boca Raton."
     />
+    <meta name="theme-color" content="#06242b" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=IBM+Plex+Mono:wght@500&display=swap"
+    />
     <link rel="stylesheet" href="styles.css" />
+    <!-- In <head> without defer on purpose — see the comment at the top of
+         the file. It flags the page as animation-capable before anything
+         paints, so nothing flashes in and then hides itself. -->
+    <script src="js/motion.js"></script>
   </head>
   <body>
     <div id="site-header"></div>
 
-    <section class="hero">
-      <div class="container">
-        <h1>
-          Local Insight.
-          <br />
-          Trusted Guidance.
-        </h1>
-        <p class="lead">
-          Monthly market updates, community insights, and real estate expertise
-          for the residents of the Yacht &amp; Racquet Club of Boca Raton.
-        </p>
-        <div class="actions" id="hero-actions">
-          <a
-            href="/market-reports"
-            class="btn btn-secondary"
-            style="
-              background: transparent;
-              border-color: rgba(255, 255, 255, 0.5);
-              color: #fff;
-            "
-          >
-            View All Market Reports →
-          </a>
-        </div>
-      </div>
-    </section>
+    <main id="main">
+      <section class="hero">
+        <div class="hero-media" aria-hidden="true"></div>
+        <div class="container">
+          <div class="hero-inner">
+            <div class="rule">
+              <span class="rule-label">Current report</span>
+              <span class="rule-line" aria-hidden="true"></span>
+              <span class="rule-value" id="hero-month">Loading…</span>
+            </div>
 
-    <div class="container">
-      <div class="feature-strip">
-        <div class="feature">
-          <div class="icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M4 20V10M11 20V4M18 20v-7"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-              />
-            </svg>
-          </div>
-          <h3>Market Intelligence</h3>
-          <p>Up-to-date real estate data and trends specific to YARCOBR.</p>
-        </div>
-        <div class="feature">
-          <div class="icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <circle
-                cx="9"
-                cy="8"
-                r="3"
-                stroke="currentColor"
-                stroke-width="1.8"
-              />
-              <circle
-                cx="17"
-                cy="9"
-                r="2.4"
-                stroke="currentColor"
-                stroke-width="1.8"
-              />
-              <path
-                d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14.5 14.3c2.6.4 4.5 2.6 4.5 5.2"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-              />
-            </svg>
-          </div>
-          <h3>Community Focused</h3>
-          <p>
-            Insights from residents, for residents. Your voice drives our
-            updates.
-          </p>
-        </div>
-        <div class="feature">
-          <div class="icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <rect
-                x="5"
-                y="3"
-                width="14"
-                height="18"
-                rx="1.5"
-                stroke="currentColor"
-                stroke-width="1.8"
-              />
-              <path
-                d="M8 8h8M8 12h8M8 16h5"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-              />
-            </svg>
-          </div>
-          <h3>Monthly Reports</h3>
-          <p>
-            Beautifully designed reports with the data that matters most to you.
-          </p>
-        </div>
-        <div class="feature">
-          <div class="icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </div>
-          <h3>Local Expertise</h3>
-          <p>
-            Daniel Schultz &amp; Matt Gelling — your real estate partners in
-            YARCOBR.
-          </p>
-        </div>
-      </div>
-    </div>
+            <h1>
+              <span class="hero-line"><span>Local insight.</span></span>
+              <span class="hero-line"><span>Trusted guidance.</span></span>
+            </h1>
 
-    <div class="container">
-      <div class="two-col" style="margin-bottom: 60px">
-        <div class="panel" id="latest-report-panel">
-          <div class="thumb"><span>YARCOBR</span></div>
-          <div>
-            <h3>Current Market Report</h3>
-            <p>Loading…</p>
-          </div>
-        </div>
-        <div class="panel" id="latest-survey-panel">
-          <div class="thumb"><span>PULSE</span></div>
-          <div>
-            <h3>Community Pulse</h3>
-            <p>Loading…</p>
-            <div class="panel-actions">
-              <a href="/community-pulse" class="btn btn-primary">
-                View Results →
+            <p class="lead">
+              Every month we publish what actually sold at the Yacht &amp;
+              Racquet Club — prices, days on market, and what is still listed —
+              plus what your neighbors are saying.
+            </p>
+
+            <div class="actions" id="hero-actions">
+              <a href="/market-reports" class="btn btn-ghost">
+                Browse the archive
+                <span class="arrow" aria-hidden="true">→</span>
               </a>
+            </div>
+
+            <!-- Three figures from the site's own data. The first is filled in
+                 from reports.json below rather than typed here, so it cannot
+                 drift out of date. -->
+            <div class="hero-soundings">
+              <div>
+                <span class="sounding-value" id="sounding-reports">—</span>
+                <span class="sounding-label">Reports published</span>
+              </div>
+              <div>
+                <span class="sounding-value">27</span>
+                <span class="sounding-label">Neighbors surveyed</span>
+              </div>
+              <div>
+                <span class="sounding-value">$0</span>
+                <span class="sounding-label">To read all of them</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <section class="home-cta">
-        <h2>Thinking about buying or selling at YARCOBR?</h2>
-        <p>
-          Daniel and Matt live here too. Ask them what your unit is worth, or
-          anything else about the local market.
-        </p>
-        <div class="actions">
-          <a href="/contact" class="btn btn-gold">Contact Us →</a>
-          <a href="/about" class="btn btn-ghost">Meet Daniel &amp; Matt</a>
+      <section class="band band-tight">
+        <div class="container">
+          <div class="rule reveal">
+            <span class="rule-label">What this is</span>
+            <span class="rule-line" aria-hidden="true"></span>
+            <span class="rule-value">Four things</span>
+          </div>
+
+          <div class="feature-strip" data-stagger>
+            <div class="feature">
+              <div class="icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 20V10M11 20V4M18 20v-7"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <h3>Market intelligence</h3>
+              <p>
+                Sales, asking prices, and time on market — for this community,
+                not for Palm Beach County.
+              </p>
+            </div>
+            <div class="feature">
+              <div class="icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <circle
+                    cx="9"
+                    cy="8"
+                    r="3"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <circle
+                    cx="17"
+                    cy="9"
+                    r="2.4"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14.5 14.3c2.6.4 4.5 2.6 4.5 5.2"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <h3>Community focused</h3>
+              <p>
+                Twice a year we ask residents what is working and what is not,
+                then publish the answers in full.
+              </p>
+            </div>
+            <div class="feature">
+              <div class="icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <rect
+                    x="5"
+                    y="3"
+                    width="14"
+                    height="18"
+                    rx="1.5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M8 8h8M8 12h8M8 16h5"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <h3>Monthly reports</h3>
+              <p>
+                Read online or download the PDF. Nothing is behind a form and
+                nothing asks for your email.
+              </p>
+            </div>
+            <div class="feature">
+              <div class="icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <h3>Local expertise</h3>
+              <p>
+                Daniel Schultz lives here. Matt Gelling is around the corner in
+                Boca Raton. Both answer their own phones.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
-    </div>
+
+      <section class="band">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Start here</h2>
+            <p>
+              The latest market report and the most recent resident survey — the
+              two things most people come to this site for.
+            </p>
+          </div>
+
+          <div class="two-col" data-stagger>
+            <div class="panel is-liftable" id="latest-report-panel">
+              <div class="panel-split">
+                <div class="thumb">
+                  <div class="contours" aria-hidden="true"></div>
+                  <span>YARCOBR</span>
+                </div>
+                <div>
+                  <h3>Current market report</h3>
+                  <p>Loading…</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel is-liftable" id="latest-survey-panel">
+              <div class="panel-split">
+                <div class="thumb">
+                  <div class="contours" aria-hidden="true"></div>
+                  <span>PULSE</span>
+                </div>
+                <div>
+                  <h3>Community Pulse</h3>
+                  <p>Loading…</p>
+                  <div class="panel-actions">
+                    <a href="/community-pulse" class="btn btn-primary">
+                      View results
+                      <span class="arrow" aria-hidden="true">→</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-tight">
+        <div class="container">
+          <div class="home-cta reveal">
+            <div class="contours" aria-hidden="true"></div>
+            <h2>Thinking about buying or selling here?</h2>
+            <p>
+              Daniel and Matt will tell you what your unit is worth, whether or
+              not you are planning to sell. No obligation, no follow-up
+              sequence.
+            </p>
+            <div class="actions actions-center">
+              <a href="/contact" class="btn btn-gold">
+                Contact us
+                <span class="arrow" aria-hidden="true">→</span>
+              </a>
+              <a href="/about" class="btn btn-ghost">Meet Daniel &amp; Matt</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
 
     <div id="site-footer"></div>
 
@@ -182,57 +284,67 @@
         // No survey PDF uploaded yet — community-pulse.html still carries the
         // hand-written results, so link there without claiming the month.
         if (!surveys.length) {
-          panel.querySelector(".thumb").innerHTML = "<span>PULSE</span>";
           panel.querySelector("p").textContent =
-            "See what your neighbors are saying about life at YARCOBR.";
+            "See what your neighbors said about life at YARCOBR.";
           return;
         }
         const latest = surveys[0];
-        panel.querySelector(".thumb").innerHTML =
-          "<span>PULSE</span><span>" + latest.title.toUpperCase() + "</span>";
+        panel.querySelector(".thumb span").textContent =
+          latest.title.toUpperCase();
         panel.querySelector("h3").textContent =
           "Community Pulse — " + latest.title;
         panel.querySelector("p").textContent =
-          "See what your neighbors are saying in the " +
-          latest.title +
-          " survey.";
+          "See what your neighbors said in the " + latest.title + " survey.";
       });
 
       loadReports().then(function (reports) {
         const heroActions = document.getElementById("hero-actions");
         const panel = document.getElementById("latest-report-panel");
 
+        document.getElementById("sounding-reports").textContent = String(
+          reports.length,
+        );
+
         if (!reports.length) {
-          panel.querySelector(".thumb").innerHTML = "<span>YARCOBR</span>";
-          panel.querySelector("h3").nextElementSibling.textContent =
+          document.getElementById("hero-month").textContent = "None yet";
+          panel.querySelector("p").textContent =
             "No reports have been published yet.";
           return;
         }
 
         const latest = reports[0];
 
-        // Hero "View latest report" button
+        document.getElementById("hero-month").textContent = latest.title;
+
+        // The hero's primary action, prepended so it sits ahead of the archive
+        // link that is already in the markup.
         const heroBtn = document.createElement("a");
         heroBtn.href = "/report?month=" + latest.slug;
         heroBtn.className = "btn btn-gold";
-        heroBtn.textContent = "View " + latest.title + " Market Report →";
+        heroBtn.innerHTML =
+          "Read the " +
+          latest.title +
+          " report" +
+          '<span class="arrow" aria-hidden="true">→</span>';
         heroActions.prepend(heroBtn);
 
-        // Latest report panel
-        panel.querySelector(".thumb").innerHTML =
-          "<span>YARCOBR</span><span>" + latest.title.toUpperCase() + "</span>";
-        panel.querySelector("p").textContent =
-          latest.title + " — " + latest.excerpt;
+        panel.querySelector(".thumb span").textContent =
+          latest.title.toUpperCase();
+        panel.querySelector("h3").textContent = latest.title + " market report";
+        panel.querySelector("p").textContent = latest.excerpt;
+
         const actions = document.createElement("div");
         actions.className = "panel-actions";
         actions.innerHTML =
           '<a href="/report?month=' +
           latest.slug +
-          '" class="btn btn-primary">View Report Online</a>' +
+          '" class="btn btn-primary">Read online<span class="arrow" aria-hidden="true">→</span></a>' +
           '<a href="' +
           latest.pdf +
           '" class="btn btn-secondary" download>Download PDF</a>';
-        panel.querySelector("div:last-child").appendChild(actions);
+        panel
+          .querySelector(".panel-split > div:last-child")
+          .appendChild(actions);
       });
     </script>
   </body>

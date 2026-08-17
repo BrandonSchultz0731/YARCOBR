@@ -8,48 +8,66 @@
       name="description"
       content="Browse the full archive of monthly YARCOBR market reports."
     />
+    <meta name="theme-color" content="#06242b" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=IBM+Plex+Mono:wght@500&display=swap"
+    />
     <link rel="stylesheet" href="styles.css" />
+    <script src="js/motion.js"></script>
   </head>
   <body>
     <div id="site-header"></div>
 
-    <div class="page-header">
-      <div class="container">
-        <h1>Market Reports</h1>
-        <p>Browse our archive of monthly market reports.</p>
-      </div>
-    </div>
-
-    <div class="container section">
-      <div class="list-controls" id="list-controls" style="display: none">
-        <input
-          type="search"
-          class="search-input"
-          id="search-input"
-          placeholder='Search reports (e.g. "August" or "2026")'
-        />
-        <div>
-          <label for="sort-select">Sort by:</label>
-          <select id="sort-select">
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-          </select>
+    <main id="main">
+      <section class="page-head">
+        <div class="contours" aria-hidden="true"></div>
+        <div class="container">
+          <div class="rule">
+            <span class="rule-label">Archive</span>
+            <span class="rule-line" aria-hidden="true"></span>
+            <span class="rule-value" id="archive-count">Loading…</span>
+          </div>
+          <h1>Market reports</h1>
+          <p>
+            One report a month, going back to the first. Read any of them online
+            or download the PDF — nothing here asks for your details.
+          </p>
         </div>
-      </div>
-      <div class="card-grid" id="report-grid"></div>
-      <p
-        id="empty-state"
-        style="display: none; text-align: center; color: var(--color-ink-muted)"
-      >
-        No reports have been published yet — check back soon.
-      </p>
-      <p
-        id="no-match-state"
-        style="display: none; text-align: center; color: var(--color-ink-muted)"
-      >
-        No reports match your search.
-      </p>
-    </div>
+      </section>
+
+      <section class="band">
+        <div class="container">
+          <div class="list-controls" id="list-controls" hidden>
+            <input
+              type="search"
+              class="search-input"
+              id="search-input"
+              aria-label="Search reports"
+              placeholder='Search reports — try "August" or "2026"'
+            />
+            <div>
+              <label for="sort-select">Sort by</label>
+              <select id="sort-select">
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="card-grid" id="report-grid"></div>
+
+          <p id="empty-state" class="empty-state" hidden>
+            No reports have been published yet — check back soon.
+          </p>
+          <p id="no-match-state" class="empty-state" hidden>
+            No reports match your search.
+          </p>
+        </div>
+      </section>
+    </main>
 
     <div id="site-footer"></div>
 
@@ -66,13 +84,17 @@
         const controls = document.getElementById("list-controls");
         const searchInput = document.getElementById("search-input");
         const sortSelect = document.getElementById("sort-select");
+        const count = document.getElementById("archive-count");
 
         if (!reports.length) {
-          emptyState.style.display = "block";
+          count.textContent = "None yet";
+          emptyState.hidden = false;
           return;
         }
 
-        controls.style.display = "flex";
+        count.textContent =
+          reports.length + (reports.length === 1 ? " report" : " reports");
+        controls.hidden = false;
 
         function render() {
           const query = searchInput.value.trim().toLowerCase();
@@ -82,37 +104,42 @@
             );
           });
 
-          // reports[] arrives newest-first from reports.json; reverse for oldest-first
+          // reports[] arrives newest-first from reports.json; reverse for
+          // oldest-first.
           if (sortSelect.value === "oldest") list = list.slice().reverse();
 
           if (!list.length) {
             grid.innerHTML = "";
-            noMatchState.style.display = "block";
+            noMatchState.hidden = false;
             return;
           }
-          noMatchState.style.display = "none";
+          noMatchState.hidden = true;
 
+          // The month is the card's title, set into the cover. It is not
+          // repeated in the body, and the excerpt is left out here because it
+          // is identical on every report and reads as filler in a grid.
           grid.innerHTML = list
             .map(function (r) {
-              // The month is the card's title — it is not repeated in the
-              // body, and the generic excerpt is omitted here because it is
-              // identical on every report and reads as filler in a grid.
               return `
-          <div class="report-card">
+          <article class="report-card reveal">
             <div class="report-cover">
+              <div class="contours" aria-hidden="true"></div>
               <span class="cover-sub">YARCOBR Market Report</span>
               <span class="cover-month">${r.title}</span>
             </div>
             <div class="report-card-body">
               <div class="report-card-actions">
-                <a href="/report?month=${r.slug}" class="btn btn-primary btn-block">View Online →</a>
+                <a href="/report?month=${r.slug}" class="btn btn-primary btn-block">Read online<span class="arrow" aria-hidden="true">→</span></a>
                 <a href="${r.pdf}" class="btn btn-secondary btn-block" download>Download PDF</a>
               </div>
             </div>
-          </div>
+          </article>
         `;
             })
             .join("");
+
+          // These cards did not exist when the observer was first set up.
+          if (window.Motion) window.Motion.scan(grid);
         }
 
         searchInput.addEventListener("input", render);
