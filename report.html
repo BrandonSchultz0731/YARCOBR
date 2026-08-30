@@ -17,36 +17,103 @@
   <body>
     <div id="site-header"></div>
 
+    <!-- This page has one job: show the report. Unlike every other page it
+         opens on a slim toolbar rather than a photographic header band — the
+         old one was 550px tall, which left only 245px of the report above the
+         fold on a 900px screen and 146px on an 800px laptop. -->
     <main id="main">
-      <section class="page-head">
-        <div class="contours" aria-hidden="true"></div>
-        <div class="container">
-          <nav class="breadcrumb" aria-label="Breadcrumb">
-            <a href="/">Home</a>
-            <span class="sep" aria-hidden="true">/</span>
-            <a href="/market-reports">Market Reports</a>
-            <span class="sep" aria-hidden="true">/</span>
-            <span id="crumb-current">Report</span>
-          </nav>
-          <div id="report-content"></div>
-        </div>
-      </section>
-
-      <section class="band">
-        <div class="container" id="report-body"></div>
-      </section>
+      <div id="report-content"></div>
     </main>
 
     <div id="site-footer"></div>
 
     <script src="js/reports-loader.js"></script>
     <script src="js/components.js"></script>
+    <!-- Tiny shim. It only pulls in the vendored PDF.js when the page actually
+         decides to draw the report itself, so desktop never downloads it. -->
+    <script src="js/pdf-inline.js"></script>
     <script>
       renderHeader("reports");
       renderFooter();
 
-      const headerMount = document.getElementById("report-content");
-      const bodyMount = document.getElementById("report-body");
+      const mount = document.getElementById("report-content");
+
+      // How to show the report. The document is displayed either way — the
+      // only question is which engine draws it.
+      //
+      // "native": the browser's own PDF viewer via <embed>. Faster, gives the
+      //   reader a real toolbar and page thumbnails, and costs no download.
+      //   Used wherever it genuinely works.
+      //
+      // "canvas": PDF.js drawing each page onto a <canvas>. Used on phones and
+      //   tablets, which cannot display an embedded PDF — iOS Safari renders a
+      //   single frozen first page and most Android browsers render nothing —
+      //   and on any browser that reports it hands PDFs off to a download.
+      //
+      // navigator.pdfViewerEnabled is the standard signal for the second case.
+      // `undefined` is treated as "probably yes" so browsers predating the
+      // property still get the native viewer.
+      function viewerMode() {
+        const capable = navigator.pdfViewerEnabled !== false;
+        const wideEnough = window.matchMedia("(min-width: 860px)").matches;
+        return capable && wideEnough ? "native" : "canvas";
+      }
+
+      function viewerMarkup(report) {
+        // #view=FitH asks the built-in viewer to fit the page to the frame's
+        // width, so the report arrives already filling the space rather than
+        // at whatever zoom the browser last remembered.
+        return `
+        <div class="report-viewer">
+          <embed
+            src="${report.pdf}#view=FitH"
+            type="application/pdf"
+            class="pdf-frame"
+            title="${report.title} market report"
+          />
+        </div>`;
+      }
+
+      // Pages drawn by PDF.js, in the normal document flow. Not a scrolling
+      // box of its own: nested touch scrolling is miserable, and in flow the
+      // phone's own scrolling and pinch-zoom behave as a reader expects.
+      function canvasMarkup(report) {
+        return `
+        <div class="report-viewer report-viewer-flow">
+          <div class="pdf-pages" id="pdf-pages">
+            <p class="pdf-loading">Loading the ${report.title} report…</p>
+          </div>
+        </div>`;
+      }
+
+      // Only reached if PDF.js cannot run at all. The visitor still gets the
+      // report, just in their device's own reader.
+      function openPanelMarkup(report) {
+        return `
+        <div class="report-viewer report-viewer-panel">
+          <div class="pdf-open">
+            <div class="pdf-open-mark" aria-hidden="true">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="M14 3v5h5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h2>${report.title} market report</h2>
+            <!-- No page count here: reports.json carries the month, the file
+                 and an excerpt, and nothing that knows how long the document
+                 is. Stating a length would be a guess that goes stale the
+                 first time a report runs longer. -->
+            <p>This browser can't draw the report on the page. It will open in your device's PDF reader instead.</p>
+            <div class="actions actions-center">
+              <a href="${report.pdf}" class="btn btn-primary btn-lg" target="_blank" rel="noopener">
+                Open the report
+                <span class="arrow" aria-hidden="true">→</span>
+              </a>
+              <a href="${report.pdf}" class="btn btn-secondary btn-lg" download>Download</a>
+            </div>
+          </div>
+        </div>`;
+      }
 
       loadReports().then(function (reports) {
         const params = new URLSearchParams(window.location.search);
@@ -54,56 +121,189 @@
         const report = slug ? findReport(reports, slug) : reports[0];
 
         if (!report) {
-          document.getElementById("crumb-current").textContent = "Not found";
-          headerMount.innerHTML = `<h1>Report not found</h1><p>We couldn't find that report.</p>`;
-          bodyMount.innerHTML = `
-        <div class="notice">
-          <p>The report you're looking for may have been moved, or the link may be incorrect.</p>
-          <a href="/market-reports" class="btn btn-primary">Browse all reports<span class="arrow" aria-hidden="true">→</span></a>
-        </div>
-      `;
+          document.title = "Report not found — YARCOBR";
+          mount.innerHTML = `
+        <div class="container band">
+          <div class="notice">
+            <h1>Report not found</h1>
+            <p>The report you're looking for may have been moved, or the link may be incorrect.</p>
+            <a href="/market-reports" class="btn btn-primary">Browse all reports<span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </div>`;
           return;
         }
 
         document.title = report.title + " Market Report — YARCOBR";
-        document.getElementById("crumb-current").textContent = report.title;
-
-        headerMount.innerHTML = `
-      <div class="report-hero">
-        <!-- No value on this one. The breadcrumb above it and the h1 below it
-             both already say the month, and three of them in 80px reads as a
-             mistake rather than emphasis. -->
-        <div class="rule">
-          <span class="rule-label">Market report</span>
-          <span class="rule-line" aria-hidden="true"></span>
-        </div>
-        <h1>${report.title}</h1>
-        <p>${report.excerpt}</p>
-        <div class="actions">
-          <a href="${report.pdf}" class="btn btn-gold" download>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 20h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Download PDF
-          </a>
-          <a href="/market-reports" class="btn btn-ghost">← Back to reports</a>
-        </div>
-      </div>
-    `;
 
         const adjacent = getAdjacent(reports, report.slug);
-        const newerLink = adjacent.newer
-          ? `<a href="/report?month=${adjacent.newer.slug}">${adjacent.newer.title} →</a>`
-          : `<span class="disabled">Newest report</span>`;
-        const olderLink = adjacent.older
-          ? `<a href="/report?month=${adjacent.older.slug}">← ${adjacent.older.title}</a>`
-          : `<span class="disabled">Oldest report</span>`;
+        const older = adjacent.older
+          ? `<a class="report-step" href="/report?month=${adjacent.older.slug}"><span class="report-step-dir">← Previous</span><span class="report-step-month">${adjacent.older.title}</span></a>`
+          : `<span class="report-step is-disabled"><span class="report-step-dir">← Previous</span><span class="report-step-month">Oldest report</span></span>`;
+        const newer = adjacent.newer
+          ? `<a class="report-step report-step-next" href="/report?month=${adjacent.newer.slug}"><span class="report-step-dir">Next →</span><span class="report-step-month">${adjacent.newer.title}</span></a>`
+          : `<span class="report-step report-step-next is-disabled"><span class="report-step-dir">Next →</span><span class="report-step-month">Newest report</span></span>`;
 
-        bodyMount.innerHTML = `
-      <embed src="${report.pdf}" type="application/pdf" class="pdf-frame" />
-      <div class="report-nav">
-        ${olderLink}
-        ${newerLink}
+        function paint() {
+          const currentMode = viewerMode();
+
+          const barActions = `<div class="report-bar-actions">
+            <a href="${report.pdf}" class="btn btn-secondary" target="_blank" rel="noopener">Open full screen</a>
+            <a href="${report.pdf}" class="btn btn-gold" download>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 20h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Download PDF
+            </a>
+          </div>`;
+
+          mount.innerHTML = `
+      <div class="report-bar">
+        <div class="report-bar-inner">
+          <div class="report-bar-id">
+            <a class="report-back" href="/market-reports">
+              <span aria-hidden="true">←</span> All reports
+            </a>
+            <h1>${report.title}<span class="report-bar-kind"> market report</span></h1>
+          </div>
+          ${barActions}
+        </div>
+      </div>
+
+      ${currentMode === "native" ? viewerMarkup(report) : canvasMarkup(report)}
+
+      <div class="report-foot">
+        <div class="container">
+          <nav class="report-nav" aria-label="Other reports">
+            ${older}
+            ${newer}
+          </nav>
+        </div>
       </div>
     `;
+
+          if (currentMode === "canvas") {
+            const pages = document.getElementById("pdf-pages");
+            window.PdfInline.renderInto(pages, report.pdf, {
+              onFail: function () {
+                // Put the whole viewer block back as the open panel, so the
+                // failure reads as one deliberate thing rather than an empty
+                // box with a stray message in it.
+                const viewer = pages.closest(".report-viewer");
+                if (viewer) viewer.outerHTML = openPanelMarkup(report);
+              },
+            });
+          }
+        }
+
+        // Measure what actually sits above the viewer rather than trusting the
+        // fallback in the stylesheet. The toolbar's height moves with its
+        // border, the display font once it loads, and whether it has wrapped.
+        function syncChrome() {
+          const viewer = document.querySelector(".report-viewer");
+          const bar = document.querySelector(".report-bar");
+          const header = document.querySelector(".site-header");
+          if (!viewer || !bar) return;
+          const top =
+            (header ? header.getBoundingClientRect().height : 0) +
+            bar.getBoundingClientRect().height;
+          viewer.style.setProperty("--report-chrome", Math.ceil(top) + "px");
+        }
+
+        // Bring the report fully into view, but only if it isn't already and
+        // only if the visitor hasn't started moving around themselves. On a
+        // tall window this does nothing at all — the viewer is sized to fit
+        // under the toolbar — and it earns its keep on short laptop screens
+        // where the last inch of the document falls below the fold.
+        function bringIntoView() {
+          const viewer = document.querySelector(".report-viewer");
+          // Either engine counts. Checking for .pdf-frame alone was a leftover
+          // from when the embed was the only way the report was ever shown,
+          // and it silently disabled this on every phone.
+          const showingReport =
+            document.querySelector(".pdf-frame") ||
+            document.querySelector(".pdf-pages");
+          if (!viewer || !showingReport) return;
+          const header = document.querySelector(".site-header");
+          const headerH = header ? header.getBoundingClientRect().height : 0;
+          const box = viewer.getBoundingClientRect();
+
+          // Already sitting clear of the sticky header and inside the fold.
+          if (box.top >= headerH - 1 && box.bottom <= window.innerHeight + 1) {
+            return;
+          }
+
+          const reduced = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+          ).matches;
+          window.scrollTo({
+            top: Math.max(0, window.pageYOffset + box.top - headerH),
+            behavior: reduced ? "auto" : "smooth",
+          });
+        }
+
+        // Anything the visitor does with the page cancels the move. Scrolling
+        // someone who has already taken hold of the page is worse than leaving
+        // an inch of the document below the fold.
+        let userMoved = false;
+        const NUDGES = ["wheel", "touchstart", "keydown", "pointerdown"];
+        function noteUser() {
+          userMoved = true;
+        }
+        NUDGES.forEach(function (evt) {
+          window.addEventListener(evt, noteUser, { passive: true });
+        });
+
+        let mode = viewerMode();
+        paint();
+        syncChrome();
+
+        // Long enough for the fonts to settle and the embed to take its size,
+        // short enough that it still reads as part of the page arriving.
+        setTimeout(function () {
+          NUDGES.forEach(function (evt) {
+            window.removeEventListener(evt, noteUser);
+          });
+          syncChrome();
+          if (userMoved || window.pageYOffset > 4) return;
+          bringIntoView();
+        }, 650);
+
+        // An iPad crossing the breakpoint by rotating is the case this exists
+        // for: portrait is too narrow to read an embedded PDF, landscape is
+        // not. Deciding once at load would leave the wrong one on screen until
+        // the visitor reloaded.
+        //
+        // Repaint ONLY when the decision actually flips. Rebuilding the markup
+        // replaces the <embed>, which reloads the PDF and throws away whatever
+        // page the reader had scrolled to — doing that on every resize tick
+        // would be worse than not handling resize at all.
+        //
+        // Both a matchMedia listener and a debounced resize listener, because
+        // they fail in different places: matchMedia is the precise signal but
+        // does not fire in every embedding context, and resize is noisy but
+        // always arrives. The flip guard makes the overlap harmless.
+        function recheck() {
+          const next = viewerMode();
+          if (next !== mode) {
+            mode = next;
+            paint();
+          }
+          // Runs either way: the toolbar can change height without the
+          // inline/panel decision changing, and the viewer's height is
+          // measured off it.
+          syncChrome();
+        }
+
+        const wide = window.matchMedia("(min-width: 860px)");
+        if (wide.addEventListener) {
+          wide.addEventListener("change", recheck);
+        } else if (wide.addListener) {
+          wide.addListener(recheck); // Safari < 14
+        }
+
+        let resizeTimer;
+        window.addEventListener("resize", function () {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(recheck, 200);
+        });
       });
     </script>
   </body>

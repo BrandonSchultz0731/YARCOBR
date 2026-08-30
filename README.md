@@ -16,6 +16,8 @@ contact.html                        Contact Us page (separate from About as of t
 styles.css                          Every page's colors, fonts, and component styles
 js/components.js                    Shared header/nav + footer, injected into every page
 js/motion.js                        Scroll reveals, scroll indicator, header scrolled state
+js/pdf-inline.js                    Draws report pages on phones (see "Reading the report")
+js/vendor/                          Vendored PDF.js — see js/vendor/README.md
 js/reports-loader.js                Fetches reports.json and provides lookup helpers
 js/survey-loader.js                 Fetches survey.json (PDF link + month label only — see note below)
 reports.json / survey.json          Auto-generated. Do not edit by hand — see below.
@@ -72,6 +74,32 @@ Things worth knowing before changing it:
 
 Because it can fail quietly, Daniel should send himself a test message through
 the form once a quarter. See `docs/contact-form-plan.md`.
+
+### Reading the report
+
+`/report?month=YYYY-MM` shows one report, and the document gets the screen —
+a slim toolbar, then the viewer filling the rest of the viewport. It is drawn
+one of two ways, decided at runtime:
+
+- **Desktop** uses the browser's own PDF viewer through `<embed>`. It is
+  faster, gives a real toolbar and page thumbnails, and downloads nothing
+  extra.
+- **Phones and tablets** cannot display an embedded PDF — iOS Safari renders a
+  single frozen first page, most Android browsers render nothing — so the page
+  draws it with PDF.js instead, one `<canvas>` per page. Pages render lazily
+  and re-render after a rotation.
+
+The switch is width plus `navigator.pdfViewerEnabled`, re-evaluated when the
+viewport crosses the breakpoint so a rotating tablet gets the right one. If
+PDF.js cannot run at all, the page falls back to a panel offering to open the
+PDF in the device's own reader — the report is always reachable.
+
+**PDF.js is the one third-party dependency in this repo**, committed under
+`js/vendor/` because there is no package manager here. It is roughly 1.8 MB on
+disk but about 510 KB over the wire once GitHub Pages gzips it, and it is
+loaded **only** on the report page and **only** on devices that need it.
+Desktop visitors never download it. See `js/vendor/README.md` for the version
+and how to update it.
 
 ## How new reports get published (fully automatic)
 

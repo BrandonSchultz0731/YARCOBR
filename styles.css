@@ -1324,9 +1324,74 @@ strong {
 }
 
 .report-card {
+  position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+/* ---- Stretched link ----------------------------------------------------
+   Makes the whole card open the report while keeping exactly one real anchor
+   in the markup. The alternative — a click handler on the card — silently
+   loses cmd-click, middle-click, "copy link address", the status-bar preview
+   on hover, and the link's place in the tab order.
+
+   The overlay covers everything, so any control that must stay separately
+   clickable has to be lifted above it — see .report-card-actions .btn below.
+   Text inside the card can no longer be selected, which is the accepted cost
+   of this pattern and costs nothing here: the month is a heading, not copy. */
+.card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+/* Lift the other controls above the overlay so they stay independently
+   clickable.
+
+   `:not(.card-link)` is load-bearing. The stretched link must NOT be
+   positioned itself: an absolutely positioned ::after resolves against its
+   nearest positioned ancestor, so making the link `position: relative` anchors
+   the overlay to the button instead of the card, and the card stops being
+   clickable anywhere outside that button. */
+.report-card-actions .btn:not(.card-link) {
+  position: relative;
+  z-index: 2;
+}
+/* The stretched link must never be given a transform. `.btn:active` sets
+   `transform: translateY(1px)`, and a transform makes an element a containing
+   block for its absolutely positioned descendants — so the moment the mouse
+   went down, the overlay collapsed from the whole card to this one button.
+   mouseup then landed on a different element, the browser produced no click at
+   all, and the card sat there looking clickable, showing its URL on hover, and
+   doing nothing.
+
+   Anything else that establishes a containing block — filter, perspective,
+   contain, backdrop-filter — would break it the same way. Keep this element
+   untransformed. */
+.card-link:active {
+  transform: none;
+}
+
+/* The card is one target now, so it should react as one: the primary button
+   takes its hover state from anywhere on the card, and the press feedback that
+   used to live on the button moves to the card. */
+.report-card:hover .card-link {
+  background: var(--harbor-hi);
+  box-shadow: 0 6px 18px -6px rgba(15, 118, 126, 0.6);
+}
+.report-card:active {
+  transform: translateY(-2px);
+}
+/* Focus lands on the stretched link, which is a small button in the corner of
+   a large target. Ring the whole card so a keyboard user can see what they are
+   about to open. */
+.report-card:focus-within {
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+}
+.report-card:focus-within .card-link:focus-visible {
+  outline: none;
 }
 /* The month is the card's title, set into the cover itself. Deep water with
    contours behind it, so the archive reads as a run of soundings taken in
@@ -1739,42 +1804,281 @@ strong {
    Report page
    ========================================================================== */
 
-.report-hero .actions {
-  margin-top: 26px;
-  animation: rise 0.8s var(--ease-out) 0.26s both;
+/* ---- The viewer -------------------------------------------------------
+   This page exists to show one document, so the document gets the screen.
+   Everything else is a slim bar above it and a pair of links below.
+
+   The viewer takes whatever the site header and the toolbar above it leave.
+   --report-chrome is the fallback only: the real number is measured and set
+   by the page once both are laid out, because the toolbar's height depends on
+   its border, the font once it loads, and whether it has wrapped. Hardcoding
+   it left the viewer overshooting the fold by 2px, which is enough to put a
+   scrollbar on a page that should not have one.
+
+   Declared twice on purpose — `dvh` accounts for mobile browser chrome that
+   appears and disappears while scrolling, and the `vh` line above it is the
+   fallback for engines that don't know `dvh` yet. Order matters; the second
+   wins where supported. */
+.report-viewer {
+  --report-chrome: 148px;
+  height: calc(100vh - var(--report-chrome));
+  height: calc(100dvh - var(--report-chrome));
+  min-height: 460px;
+  padding: 0 var(--gutter) clamp(20px, 3vw, 32px);
 }
 .pdf-frame {
+  display: block;
   width: 100%;
-  height: min(84vh, 900px);
+  max-width: 1320px;
+  height: 100%;
+  margin: 0 auto;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow);
 }
-@media (max-width: 700px) {
-  .pdf-frame {
-    height: 62vh;
-  }
+
+/* ---- Toolbar ---------------------------------------------------------- */
+.report-bar {
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.report-bar-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.report-bar-id {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  min-width: 0;
+  padding: 10px 0;
+}
+.report-back {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--harbor-text);
+  white-space: nowrap;
+  transition: color var(--fast) var(--ease);
+}
+.report-back:hover {
+  color: var(--clay);
+}
+.report-bar h1 {
+  margin: 0;
+  font-size: var(--text-xl);
+  letter-spacing: -0.02em;
+}
+/* Context for the month, without spending a second line on it. */
+.report-bar-kind {
+  color: var(--ink-faint);
+  font-weight: 400;
+}
+.report-bar-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+}
+.report-bar-actions .btn {
+  padding: 10px 18px;
 }
 
+/* ---- Pages drawn by PDF.js (phones and tablets) ------------------------
+   These sit in the normal document flow rather than in a scrolling box, so
+   the height is whatever the pages come to — the fixed viewport height that
+   the native viewer needs would trap them in a nested scroller. */
+.report-viewer-flow {
+  height: auto;
+  min-height: 0;
+  padding-bottom: clamp(20px, 4vw, 32px);
+}
+/* Narrower side margins than the rest of the site on a phone. Every pixel
+   taken off the gutter goes into the width of the page, and the page is the
+   only thing on screen worth looking at. */
+@media (max-width: 620px) {
+  .report-viewer-flow {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+.pdf-pages {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pdf-page {
+  position: relative;
+}
+.pdf-page-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+/* The page number sits under each page rather than over it — a chip floating
+   on the artwork covers content on a page that happens to be busy there. */
+.pdf-page-label {
+  margin-top: 6px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+}
+/* Holds the space while the first pages decode, so the footer does not flash
+   up under the toolbar and then get pushed down. */
+.pdf-loading {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink-faint);
+  font-size: var(--text-sm);
+}
+
+/* ---- The panel shown when inline rendering is off the table ------------
+   Not an apology and not an error: on a phone the device's own PDF reader is
+   genuinely the better place to read this, so the panel is a proper landing
+   with the month, the length, and one obvious button. */
+.report-viewer-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  min-height: 0;
+  padding: clamp(32px, 7vw, 64px) var(--gutter) clamp(32px, 5vw, 56px);
+}
+.pdf-open {
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(28px, 6vw, 44px) clamp(22px, 5vw, 36px);
+}
+.pdf-open-mark {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 18px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-sink);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--harbor);
+}
+.pdf-open h2 {
+  font-size: var(--text-xl);
+  margin-bottom: 8px;
+  text-wrap: balance;
+}
+.pdf-open p {
+  font-size: var(--text-sm);
+  margin: 0 auto 24px;
+  max-width: 34ch;
+}
+/* Bigger tap targets than the site default — this is the one thing the
+   visitor came here to do, and they may be doing it on a phone. */
+.btn-lg {
+  padding: 16px 28px;
+  font-size: var(--text-base);
+}
+.pdf-open .actions .btn {
+  flex: 1 1 auto;
+}
+
+/* ---- Previous / next -------------------------------------------------- */
+.report-foot {
+  padding-bottom: clamp(32px, 5vw, 56px);
+}
 .report-nav {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  padding: 22px 0 0;
-  font-size: var(--text-sm);
-  font-weight: 600;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
 }
-.report-nav a {
+.report-step {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.report-step-next {
+  text-align: right;
+  margin-left: auto;
+}
+.report-step-dir {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.report-step-month {
+  font-family: var(--font-display);
+  font-variation-settings:
+    "opsz" 24,
+    "SOFT" 20,
+    "WONK" 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
   color: var(--harbor-text);
   transition: color var(--fast) var(--ease);
 }
-.report-nav a:hover {
+a.report-step:hover .report-step-month {
   color: var(--clay);
 }
-.report-nav .disabled {
+.report-step.is-disabled .report-step-month {
   color: var(--ink-faint);
-  pointer-events: none;
+  font-weight: 400;
+}
+
+@media (max-width: 620px) {
+  .report-bar-inner {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  /* "September 2026 market report" wraps onto two lines in a bar this narrow,
+     and the suffix is the half worth losing — the page is unmistakably a
+     report by this point. */
+  .report-bar-kind {
+    display: none;
+  }
+  .report-bar-actions {
+    width: 100%;
+  }
+  .report-bar-actions .btn {
+    flex: 1 1 140px;
+  }
+  .report-step-month {
+    font-size: var(--text-base);
+  }
 }
 
 .notice {

@@ -120,6 +120,12 @@
           // is identical on every report and reads as filler in a grid.
           grid.innerHTML = list
             .map(function (r) {
+              // The whole card opens the report. `card-link` stretches this
+              // anchor's hit area over the entire card (see the stylesheet),
+              // so it stays one real link — cmd-click, middle-click, "copy
+              // link address" and keyboard focus all behave normally, which a
+              // click handler on the card would have broken. Download PDF sits
+              // above the overlay and still does its own thing.
               return `
           <article class="report-card reveal">
             <div class="report-cover">
@@ -129,7 +135,7 @@
             </div>
             <div class="report-card-body">
               <div class="report-card-actions">
-                <a href="/report?month=${r.slug}" class="btn btn-primary btn-block">Read online<span class="arrow" aria-hidden="true">→</span></a>
+                <a href="/report?month=${r.slug}" class="btn btn-primary btn-block card-link">Read online<span class="arrow" aria-hidden="true">→</span></a>
                 <a href="${r.pdf}" class="btn btn-secondary btn-block" download>Download PDF</a>
               </div>
             </div>
