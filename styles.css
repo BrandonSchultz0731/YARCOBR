@@ -1922,6 +1922,9 @@ strong {
 .pdf-page {
   position: relative;
 }
+.pdf-page-stage {
+  position: relative;
+}
 .pdf-page-canvas {
   display: block;
   width: 100%;
@@ -1930,6 +1933,17 @@ strong {
   border-radius: var(--radius-sm);
   background: var(--surface);
   box-shadow: var(--shadow-sm);
+}
+.pdf-link {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  background: transparent;
+}
+.pdf-link::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
 }
 /* The page number sits under each page rather than over it — a chip floating
    on the artwork covers content on a page that happens to be busy there. */
