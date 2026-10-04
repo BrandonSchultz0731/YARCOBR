@@ -230,6 +230,25 @@ probably too high-resolution — compress with:
 - Mac Preview: File → Export → Quartz Filter → Reduce File Size
 - Adobe Acrobat: File → Save As Other → Reduced Size PDF
 
+## Making links in a PDF clickable
+
+Illustrator can't add hyperlinks, so a URL in a report (like the survey link
+behind the "Take our survey" button) is just text. Desktop Chrome guesses a
+link from that text, so it looks fine on a laptop, but phones, Safari, and
+the report page's phone viewer don't make it tappable.
+
+After compressing, run this on the final PDF to add a real link over every
+URL in its text:
+
+```
+npm install                                     # once
+node scripts/add-pdf-links.mjs reports/2026-10.pdf --dry-run   # see what it finds
+node scripts/add-pdf-links.mjs reports/2026-10.pdf             # edit the file in place
+```
+
+It is safe to run twice, and it doesn't change how the pages look. Run it
+**after** compressing: some compressors remove links.
+
 ## Colors, fonts & motion
 
 All brand values live at the top of `styles.css` as CSS variables. Change a

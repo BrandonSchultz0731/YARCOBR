@@ -1,0 +1,11 @@
+{
+  "name": "yarcobr",
+  "private": true,
+  "description": "Only for the helper scripts in /scripts. The site itself has no build step and no dependencies.",
+  "scripts": {
+    "link-pdf": "node scripts/add-pdf-links.mjs"
+  },
+  "devDependencies": {
+    "pdf-lib": "1.17.1"
+  }
+}

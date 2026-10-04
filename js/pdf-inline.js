@@ -22,11 +22,10 @@
    - This is loaded on demand. Desktop browsers keep the built-in viewer and
      never download the library.
    - A canvas is only pixels, so links in the PDF are not clickable on their
-     own. Each page gets transparent <a> elements laid over the canvas. They
-     come from the PDF's real link annotations when it has them, and from
-     URL-only text items when it does not (some exporters keep the URL text
-     but drop the link itself; desktop Chrome auto-links such text, phones
-     and PDF.js do not).
+     own. Each page gets transparent <a> elements laid over the canvas, one
+     per link annotation in the PDF. A URL that is only text in the PDF gets
+     no link here: desktop Chrome guesses links from text, PDF.js does not,
+     so the fix for that is a real hyperlink in the exported PDF.
    ========================================================================== */
 
 (function () {
@@ -43,16 +42,6 @@
   // Only these schemes become tappable. Anything else in a PDF (javascript:,
   // file:, ...) is ignored.
   var SAFE_HREF = /^(https?:|mailto:|tel:)/i;
-
-  // A text item that is *only* a URL. Anchored on purpose: a URL inside a
-  // sentence would otherwise get a link covering the whole sentence.
-  var URL_ONLY = /^\s*(https?:\/\/[^\s<>"]+)\s*$/i;
-
-  // Extra tap area around text-detected links, in PDF points. A line of text
-  // is a small target for a thumb.
-  var TEXT_LINK_PAD = 6;
-
-  var DEBUG = /[?&]debug=1/.test(window.location.search);
 
   var libPromise = null;
   function loadLib() {
@@ -76,13 +65,13 @@
    * recalculation. Uses convertToViewportPoint, which exists in PDF.js 6
    * (convertToViewportRectangle does not).
    */
-  function placeLink(stage, viewport, x1, y1, x2, y2, href, pad) {
+  function placeLink(stage, viewport, x1, y1, x2, y2, href) {
     var p1 = viewport.convertToViewportPoint(x1, y1);
     var p2 = viewport.convertToViewportPoint(x2, y2);
-    var x = Math.min(p1[0], p2[0]) - pad;
-    var y = Math.min(p1[1], p2[1]) - pad;
-    var w = Math.abs(p2[0] - p1[0]) + pad * 2;
-    var h = Math.abs(p2[1] - p1[1]) + pad * 2;
+    var x = Math.min(p1[0], p2[0]);
+    var y = Math.min(p1[1], p2[1]);
+    var w = Math.abs(p2[0] - p1[0]);
+    var h = Math.abs(p2[1] - p1[1]);
 
     var a = document.createElement("a");
     a.className = "pdf-link";
@@ -97,10 +86,8 @@
     stage.appendChild(a);
   }
 
-  // Real link annotations, when the PDF has them. Returns the set of URLs
-  // covered so the text fallback does not double up.
+  // One overlay per link annotation in the PDF.
   function addLinks(stage, annots, viewport) {
-    var have = {};
     annots.forEach(function (a) {
       if (a.subtype !== "Link" || !a.rect) return;
       var href = a.url || a.unsafeUrl;
@@ -113,49 +100,8 @@
         a.rect[2],
         a.rect[3],
         href,
-        0,
-      );
-      have[href] = true;
-    });
-    return have;
-  }
-
-  // Fallback for PDFs whose exporter kept the URL as text but dropped the
-  // link itself.
-  function addTextLinks(stage, items, viewport, have) {
-    items.forEach(function (it) {
-      var m = it.str && URL_ONLY.exec(it.str);
-      if (!m || have[m[1]]) return;
-      var e = it.transform[4];
-      var f = it.transform[5];
-      placeLink(
-        stage,
-        viewport,
-        e,
-        f,
-        e + it.width,
-        f + it.height,
-        m[1],
-        TEXT_LINK_PAD,
       );
     });
-  }
-
-  // Visible only with ?debug=1 on the page URL. Shows what each page's
-  // annotations and URL-like text looked like to PDF.js.
-  function debugLog(line) {
-    if (!DEBUG) return;
-    var box = document.getElementById("pdf-debug");
-    if (!box) {
-      box = document.createElement("pre");
-      box.id = "pdf-debug";
-      box.style.cssText =
-        "position:fixed;bottom:0;left:0;right:0;max-height:40vh;" +
-        "overflow:auto;margin:0;padding:8px;background:#000;color:#0f0;" +
-        "font:11px/1.3 monospace;white-space:pre-wrap;z-index:9999";
-      document.body.appendChild(box);
-    }
-    box.textContent += line + "\n";
   }
 
   /**
@@ -216,53 +162,15 @@
 
                 // Fire and forget: a failure here must never break page
                 // rendering.
-                Promise.all([
-                  page.getAnnotations({ intent: "display" }).catch(function () {
-                    return [];
-                  }),
-                  page.getTextContent().catch(function () {
-                    return { items: [] };
-                  }),
-                ])
-                  .then(function (r) {
-                    var annots = r[0];
-                    var items = r[1].items;
-                    var have = addLinks(stage, annots, base);
-                    addTextLinks(stage, items, base, have);
-
-                    if (DEBUG) {
-                      var urlish = items
-                        .filter(function (it) {
-                          return it.str && /https?:\/\//i.test(it.str);
-                        })
-                        .map(function (it) {
-                          return it.str.slice(0, 80);
-                        });
-                      debugLog(
-                        "page " +
-                          pageNumber +
-                          ": annotations=" +
-                          JSON.stringify(
-                            annots.map(function (a) {
-                              return {
-                                subtype: a.subtype,
-                                url: a.url,
-                                dest: a.dest,
-                              };
-                            }),
-                          ) +
-                          " urlText=" +
-                          JSON.stringify(urlish) +
-                          " overlays=" +
-                          stage.querySelectorAll(".pdf-link").length,
-                      );
-                    }
+                page
+                  .getAnnotations({ intent: "display" })
+                  .then(function (annots) {
+                    addLinks(stage, annots, base);
                   })
                   .catch(function (e) {
                     if (window.console && console.warn) {
                       console.warn("[report] link overlay failed:", e);
                     }
-                    debugLog("page " + pageNumber + " ERROR: " + e);
                   });
               });
             });
