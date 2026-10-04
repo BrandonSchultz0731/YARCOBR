@@ -7,7 +7,9 @@ that is how GitHub Pages serves them. Plain `python3 -m http.server` does not
 do that — it returns 404 for /about, since the file on disk is about.html — so
 clicking around locally would look broken even though the live site is fine.
 
-This server adds that one behaviour and nothing else.
+This server adds that behaviour, plus one difference from GitHub Pages: it
+tells the browser not to cache anything, so a reload always shows the files
+as they are on disk right now.
 
     python3 scripts/serve.py          # http://localhost:8000
     python3 scripts/serve.py 8080     # pick another port
@@ -35,6 +37,13 @@ class GitHubPagesHandler(http.server.SimpleHTTPRequestHandler):
         if not os.path.exists(local) and os.path.isfile(local + ".html"):
             return local + ".html"
         return local
+
+    def end_headers(self):
+        # Never let the browser reuse a file. Without this Chrome guesses its
+        # own cache lifetime, and a replaced PDF or script can keep showing
+        # the old version (even in incognito) until Chrome is quit.
+        self.send_header("Cache-Control", "no-store")
+        super().end_headers()
 
     def send_error(self, code, message=None, explain=None):
         # Serve /404.html for missing pages, as GitHub Pages does, so the
