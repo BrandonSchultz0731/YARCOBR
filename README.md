@@ -120,6 +120,12 @@ with no one editing any code.
 Deleting a PDF from `/reports` and committing removes it from the site the
 same way. Survey PDFs work identically — see `survey/README.md`.
 
+**Survey buttons are automatic too.** If a report's PDF contains a URL with
+"survey" in it (the Community Pulse link behind the button), the same Action
+records it in `reports.json`, and that report's page shows a "Take the
+survey" button in the toolbar and again below the document. A report without
+one shows neither. Nothing to edit by hand.
+
 **Filenames that don't match `YYYY-MM.pdf` are simply skipped** (logged as a
 warning in the Action's run log) rather than breaking the site — a typo in a
 filename can't take the whole site down.

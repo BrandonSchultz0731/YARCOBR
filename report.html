@@ -143,12 +143,42 @@
           ? `<a class="report-step report-step-next" href="/report?month=${adjacent.newer.slug}"><span class="report-step-dir">Next →</span><span class="report-step-month">${adjacent.newer.title}</span></a>`
           : `<span class="report-step report-step-next is-disabled"><span class="report-step-dir">Next →</span><span class="report-step-month">Newest report</span></span>`;
 
+        // The survey link is read out of the PDF by the generator script, so
+        // it only exists for reports that carry one. Checked again here so
+        // nothing but an http(s) URL ever reaches an href.
+        const survey =
+          report.survey && /^https?:\/\//i.test(report.survey)
+            ? report.survey
+            : null;
+
+        // Shown above and below the document: the survey is the one thing in
+        // a report that asks something of the reader, and the button for it
+        // inside the PDF is easy to miss on the last page.
+        const surveyButton = survey
+          ? `<a href="${survey}" class="btn btn-gold report-survey-btn" target="_blank" rel="noopener">
+              Take the survey
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>`
+          : "";
+        const surveyPanel = survey
+          ? `<div class="cta-bar report-survey">
+              <p>This report comes with a short survey for residents.</p>
+              <a href="${survey}" class="btn btn-gold btn-lg" target="_blank" rel="noopener">
+                Take the survey
+                <span class="arrow" aria-hidden="true">→</span>
+              </a>
+            </div>`
+          : "";
+
         function paint() {
           const currentMode = viewerMode();
 
+          // One gold button per screen: when there is a survey it takes the
+          // accent and Download steps down to secondary.
           const barActions = `<div class="report-bar-actions">
+            ${surveyButton}
             <a href="${report.pdf}" class="btn btn-secondary" target="_blank" rel="noopener">Open full screen</a>
-            <a href="${report.pdf}" class="btn btn-gold" download>
+            <a href="${report.pdf}" class="btn ${survey ? "btn-secondary" : "btn-gold"}" download>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 20h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Download PDF
             </a>
@@ -171,6 +201,7 @@
 
       <div class="report-foot">
         <div class="container">
+          ${surveyPanel}
           <nav class="report-nav" aria-label="Other reports">
             ${older}
             ${newer}

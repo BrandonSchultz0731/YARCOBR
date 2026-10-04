@@ -2029,6 +2029,11 @@ strong {
 .report-foot {
   padding-bottom: clamp(32px, 5vw, 56px);
 }
+/* The survey panel, between the document and previous / next. Only present
+   for reports that carry a survey link. */
+.report-survey {
+  margin-bottom: 22px;
+}
 .report-nav {
   display: flex;
   justify-content: space-between;
@@ -2089,6 +2094,11 @@ a.report-step:hover .report-step-month {
   }
   .report-bar-actions .btn {
     flex: 1 1 140px;
+  }
+  /* On its own row above the other two, so the survey reads as the
+     main action rather than one of three. */
+  .report-bar-actions .report-survey-btn {
+    flex-basis: 100%;
   }
   .report-step-month {
     font-size: var(--text-base);

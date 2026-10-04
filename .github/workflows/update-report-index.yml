@@ -23,6 +23,13 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
+      # The report generator reads each PDF's survey link with the vendored
+      # PDF.js, which needs a current Node.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Generate reports.json from /reports folder
         run: node scripts/generate-reports-json.js
 
