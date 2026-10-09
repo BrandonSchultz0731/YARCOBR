@@ -10,7 +10,7 @@ automatically. See below.
 index.html                          Home page
 market-reports.html                 Archive of all reports (auto-generated, with sort + search)
 report.html                         Individual report page — reads ?month=2026-08 from the URL
-community-pulse.html                Survey results (see note below — only partly automated)
+community-pulse.html                Every survey's results, with a switcher — reads ?survey=2026-10 (see note below)
 about.html                          About Us page
 contact.html                        Contact Us page (separate from About as of this update)
 styles.css                          Every page's colors, fonts, and component styles
@@ -32,18 +32,17 @@ scripts/generate-survey-json.js     Builds survey.json from whatever is in /surv
 ### Important: Community Pulse automation is partial
 
 Uploading a PDF to `/survey` (named `YYYY-MM.pdf`, same rule as `/reports`)
-automatically does two things: it repoints the "View Full Survey Results" and
-"Download Survey Report" buttons on `community-pulse.html` at the new file,
-and it updates the **month label** on the home page's Community Pulse panel.
-Until a PDF exists, those two buttons stay hidden rather than linking to a
-missing file.
+automatically does two things: it points that survey's "View Full Survey
+Results" and "Download Survey Report" buttons on `community-pulse.html` at the
+new file, and it updates the **month label** on the home page's Community
+Pulse panel. A survey with no PDF keeps those buttons hidden rather than
+linking to a missing file.
 
-It does **not** automatically update the actual stats, donut chart
-percentages, key takeaways, or community summary on `community-pulse.html` — those
-are specific numbers from each survey that can't be derived from a filename.
-Whoever compiles the survey results still needs to edit those directly in
-`community-pulse.html` each cycle (there's a comment at the top of that file
-marking what to update).
+It does **not** add the survey's results to `community-pulse.html`. Every
+survey stays on that page, one section per survey, with a switcher in the
+header (`/community-pulse?survey=2026-07` opens a specific one; no `?survey=`
+shows the newest). Each new survey needs a new section and a new switcher
+link written by hand — the comment at the top of that file lists the steps.
 
 ### Contact form
 

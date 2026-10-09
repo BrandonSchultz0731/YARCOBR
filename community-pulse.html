@@ -1,12 +1,22 @@
 <!--
-  MONTHLY WORKFLOW NOTE: unlike /reports, almost nothing on this page is
-  automated. Uploading /survey/YYYY-MM.pdf only repoints the two
-  "survey results PDF" buttons (they hide themselves if no PDF exists yet).
+  ADDING A NEW SURVEY: unlike /reports, almost nothing on this page is
+  automated. Every survey ever run stays on this page; the switcher in the
+  header picks which one is shown (?survey=YYYY-MM, newest by default).
 
-  Everything else — the intro paragraph, the survey period badge, the stats,
-  the donut percentages, the key takeaways, and the summary — is written
-  by hand and must be updated each time a new survey closes. Search this file
-  for "July 2026" and for the numbers themselves to find what to change.
+  To add one:
+    1. Add a link at the TOP of <nav class="pulse-switch"> with
+       data-edition-link="YYYY-MM" (the first link is the default).
+    2. In the page head, add a rule-value, an intro <p> and a survey-badge,
+       each with data-edition="YYYY-MM".
+    3. Add a <section class="band" data-edition="YYYY-MM"> with that
+       survey's results. Copy an existing one: every survey asks different
+       questions, so expect to rewrite the cards, not just change numbers.
+       The question-card styles (October 2026) and donut styles (July 2026)
+       are both in styles.css.
+    4. Add `hidden` to the previous newest survey's data-edition elements,
+       so the page source matches what the script shows by default.
+    5. Upload /survey/YYYY-MM.pdf. That repoints only that survey's PDF
+       buttons, which stay hidden for any survey with no PDF.
 -->
 <!doctype html>
 <html lang="en">
@@ -38,18 +48,54 @@
           <div class="rule">
             <span class="rule-label">Resident survey</span>
             <span class="rule-line" aria-hidden="true"></span>
-            <span class="rule-value">July 2026</span>
+            <span class="rule-value" data-edition="2026-10">October 2026</span>
+            <span class="rule-value" data-edition="2026-07" hidden>July 2026</span>
           </div>
           <div class="page-head-flex">
             <div>
               <h1>Community Pulse</h1>
-              <p>
+              <p data-edition="2026-10">
+                Thank you to everyone who took part in the October 2026 survey
+                on the Initial Capital Contribution, capital planning, and the
+                community&rsquo;s direction. Every answer below came from a
+                resident, and none of them are attributed.
+              </p>
+              <p data-edition="2026-07" hidden>
                 Thank you to everyone who took part in the July 2026 survey.
                 Every answer below came from a resident, and none of them are
                 attributed.
               </p>
             </div>
-            <div class="survey-badge">
+            <div class="survey-badge" data-edition="2026-10">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <rect
+                  x="3"
+                  y="5"
+                  width="18"
+                  height="16"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                />
+                <path
+                  d="M3 10h18M8 3v4M16 3v4"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <span>
+                <span class="label">Results published</span>
+                October 2026
+              </span>
+            </div>
+            <div class="survey-badge" data-edition="2026-07" hidden>
               <svg
                 width="22"
                 height="22"
@@ -79,10 +125,670 @@
               </span>
             </div>
           </div>
+
+          <!-- One link per survey, newest first. Each is a real link
+               (?survey=YYYY-MM) so a specific survey can be shared or
+               bookmarked; the script at the bottom swaps the results in place
+               instead of reloading. -->
+          <nav class="pulse-switch" aria-label="Choose a survey">
+            <a href="?survey=2026-10" data-edition-link="2026-10" aria-current="page">
+              <span class="pulse-switch-num">#2</span>
+              October 2026
+            </a>
+            <a href="?survey=2026-07" data-edition-link="2026-07">
+              <span class="pulse-switch-num">#1</span>
+              July 2026
+            </a>
+          </nav>
         </div>
       </section>
 
-      <section class="band">
+      <section class="band" data-edition="2026-10">
+        <div class="container stack-lg">
+          <div class="stat-row" data-stagger>
+            <div class="stat">
+              <div class="stat-number">35</div>
+              <div class="stat-label">Survey submissions</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">7</div>
+              <div class="stat-label">Multiple-choice questions</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">21</div>
+              <div class="stat-label">Written comments</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="rule reveal">
+              <span class="rule-label">ICC &amp; funding</span>
+              <span class="rule-line" aria-hidden="true"></span>
+              <span class="rule-value">Questions 1 – 4</span>
+            </div>
+            <div class="section-head reveal">
+              <h2>The Initial Capital Contribution</h2>
+              <p>What residents think the ICC should be, who should pay it, and how future projects should be funded. Percentages are of the 35 submissions, not of the community.</p>
+            </div>
+
+            <div class="poll-grid" data-stagger>
+              <div class="panel poll-card">
+                <p class="poll-eyebrow">Question 1</p>
+                <h3 class="poll-question">The Board is considering increasing the Initial Capital Contribution (ICC) paid by new purchasers from $50,000 to $75,000. Do you support this proposed increase?</h3>
+                <ul class="poll">
+                  <li class="is-top">
+                    <span class="poll-label">Yes, I support increasing the ICC to $75,000</span>
+                    <span class="poll-value">17 · 48.6%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 48.6%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">I would support an increase, but to an amount below $75,000</span>
+                    <span class="poll-value">1 · 2.9%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 2.9%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">No, I prefer keeping the ICC at $50,000</span>
+                    <span class="poll-value">12 · 34.3%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 34.3%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">I need more information before forming an opinion</span>
+                    <span class="poll-value">5 · 14.3%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 14.3%"></span
+                    ></span>
+                  </li>
+                </ul>
+              </div>
+              <div class="panel poll-card">
+                <p class="poll-eyebrow">Question 2</p>
+                <h3 class="poll-question">If an existing YARCOBR owner sells their unit and buys another YARCOBR unit as their new residence, what portion of the prevailing ICC should they pay?</h3>
+                <ul class="poll">
+                  <li class="is-top">
+                    <span class="poll-label">No ICC</span>
+                    <span class="poll-value">29 · 82.9%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 82.9%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">25% of the prevailing ICC</span>
+                    <span class="poll-value">1 · 2.9%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 2.9%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">50% of the prevailing ICC</span>
+                    <span class="poll-value">4 · 11.4%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 11.4%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">I need more information before forming an opinion</span>
+                    <span class="poll-value">1 · 2.9%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 2.9%"></span
+                    ></span>
+                  </li>
+                </ul>
+              </div>
+              <div class="panel poll-card">
+                <p class="poll-eyebrow">Question 3</p>
+                <h3 class="poll-question">If an existing YARCOBR owner keeps their current unit and buys an additional YARCOBR unit as an investment or rental property, what portion of the prevailing ICC should they pay?</h3>
+                <ul class="poll">
+                  <li>
+                    <span class="poll-label">No ICC</span>
+                    <span class="poll-value">2 · 5.7%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 5.7%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">25% of the prevailing ICC</span>
+                    <span class="poll-value">6 · 17.1%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 17.1%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">50% of the prevailing ICC</span>
+                    <span class="poll-value">9 · 25.7%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 25.7%"></span
+                    ></span>
+                  </li>
+                  <li class="is-top">
+                    <span class="poll-label">100% of the prevailing ICC</span>
+                    <span class="poll-value">17 · 48.6%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 48.6%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">I need more information before forming an opinion</span>
+                    <span class="poll-value">1 · 2.9%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 2.9%"></span
+                    ></span>
+                  </li>
+                </ul>
+              </div>
+              <div class="panel poll-card">
+                <p class="poll-eyebrow">Question 4</p>
+                <h3 class="poll-question">As YARCOBR plans for future capital improvements, which approach should be the primary source of funding?</h3>
+                <ul class="poll">
+                  <li class="is-top">
+                    <span class="poll-label">Initial Capital Contribution (ICC) paid by purchasers</span>
+                    <span class="poll-value">23 · 65.7%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 65.7%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Special assessments when major projects arise</span>
+                    <span class="poll-value">4 · 11.4%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 11.4%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Regular HOA assessments</span>
+                    <span class="poll-value">4 · 11.4%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 11.4%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">I need more information before forming an opinion</span>
+                    <span class="poll-value">4 · 11.4%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 11.4%"></span
+                    ></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="rule reveal">
+              <span class="rule-label">Planning &amp; direction</span>
+              <span class="rule-line" aria-hidden="true"></span>
+              <span class="rule-value">Questions 5 – 7</span>
+            </div>
+            <div class="section-head reveal">
+              <h2>Capital planning and priorities</h2>
+              <p>How much a long-range plan matters, where the money should go first, and how residents feel about the community&rsquo;s direction.</p>
+            </div>
+
+            <div class="poll-grid" data-stagger>
+              <div class="panel poll-card poll-card-wide">
+                <p class="poll-eyebrow">Question 6</p>
+                <h3 class="poll-question">Which areas should YARCOBR prioritize for future capital improvements? Residents could select up to three.</h3>
+                <ul class="poll">
+                  <li class="is-top">
+                    <span class="poll-label">Building infrastructure and structural needs</span>
+                    <span class="poll-value">18 · 51.4%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 51.4%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Entrance, guardhouse and arrival experience</span>
+                    <span class="poll-value">15 · 42.9%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 42.9%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Beach facilities and improvements</span>
+                    <span class="poll-value">14 · 40.0%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 40%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Chickee Bar / food &amp; beverage facilities</span>
+                    <span class="poll-value">13 · 37.1%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 37.1%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Marina and seawall</span>
+                    <span class="poll-value">13 · 37.1%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 37.1%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Landscaping and grounds</span>
+                    <span class="poll-value">10 · 28.6%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 28.6%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Pools and spas</span>
+                    <span class="poll-value">10 · 28.6%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 28.6%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Clubhouse and common-area improvements</span>
+                    <span class="poll-value">10 · 28.6%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 28.6%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Security systems and facilities</span>
+                    <span class="poll-value">6 · 17.1%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 17.1%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Tennis, pickleball and other recreational facilities</span>
+                    <span class="poll-value">5 · 14.3%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 14.3%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Other</span>
+                    <span class="poll-value">2 · 5.7%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 5.7%"></span
+                    ></span>
+                  </li>
+                </ul>
+                <p class="poll-note">Up to three selections each, so these add up to more than 100%. One &ldquo;Other&rdquo; answer read &ldquo;ALL&rdquo;.</p>
+              </div>
+              <div class="panel poll-card">
+                <p class="poll-eyebrow">Question 5</p>
+                <h3 class="poll-question">How important is it that YARCOBR develop and communicate a formal 5–10 year capital improvement plan covering major infrastructure, maintenance and amenity projects?</h3>
+                <ul class="poll">
+                  <li class="is-top">
+                    <span class="poll-label">Very important</span>
+                    <span class="poll-value">23 · 65.7%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 65.7%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Somewhat important</span>
+                    <span class="poll-value">9 · 25.7%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 25.7%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Not very important</span>
+                    <span class="poll-value">1 · 2.9%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 2.9%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">I need more information before forming an opinion</span>
+                    <span class="poll-value">2 · 5.7%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 5.7%"></span
+                    ></span>
+                  </li>
+                </ul>
+              </div>
+              <div class="panel poll-card">
+                <p class="poll-eyebrow">Question 7</p>
+                <h3 class="poll-question">Overall, how satisfied are you with the direction YARCOBR is heading?</h3>
+                <ul class="poll">
+                  <li>
+                    <span class="poll-label">Very satisfied</span>
+                    <span class="poll-value">11 · 31.4%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 31.4%"></span
+                    ></span>
+                  </li>
+                  <li class="is-top">
+                    <span class="poll-label">Somewhat satisfied</span>
+                    <span class="poll-value">12 · 34.3%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 34.3%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Neither satisfied nor dissatisfied</span>
+                    <span class="poll-value">5 · 14.3%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 14.3%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Somewhat dissatisfied</span>
+                    <span class="poll-value">5 · 14.3%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 14.3%"></span
+                    ></span>
+                  </li>
+                  <li>
+                    <span class="poll-label">Very dissatisfied</span>
+                    <span class="poll-value">2 · 5.7%</span>
+                    <span class="poll-bar" aria-hidden="true"
+                      ><span style="width: 5.7%"></span
+                    ></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="rule reveal">
+              <span class="rule-label">What it adds up to</span>
+              <span class="rule-line" aria-hidden="true"></span>
+              <span class="rule-value">Six takeaways</span>
+            </div>
+
+            <div class="two-col-even align-start" data-stagger>
+              <div class="panel">
+                <h3 class="panel-title">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.3.3.5.7.5 1.1h6c0-.4.2-.8.5-1.1A6 6 0 0 0 12 3Z"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  Key takeaways
+                </h3>
+                <ul class="insight-list">
+                  <li>
+                    <span class="tick" aria-hidden="true">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="m5 12.5 4.5 4.5L19 7"
+                          stroke="currentColor"
+                          stroke-width="2.2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    Nearly half (48.6%) support raising the ICC for new purchasers to $75,000. About a third (34.3%) prefer keeping it at $50,000, and 14.3% want more information first.
+                  </li>
+                  <li>
+                    <span class="tick" aria-hidden="true">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="m5 12.5 4.5 4.5L19 7"
+                          stroke="currentColor"
+                          stroke-width="2.2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    Most (82.9%) say an owner who sells and buys another YARCOBR unit to live in should pay no ICC. For an owner adding a second unit as an investment, the most common answer (48.6%) is the full ICC.
+                  </li>
+                  <li>
+                    <span class="tick" aria-hidden="true">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="m5 12.5 4.5 4.5L19 7"
+                          stroke="currentColor"
+                          stroke-width="2.2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    The ICC is the clear first choice (65.7%) for funding future capital improvements, well ahead of special or regular assessments (11.4% each).
+                  </li>
+                  <li>
+                    <span class="tick" aria-hidden="true">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="m5 12.5 4.5 4.5L19 7"
+                          stroke="currentColor"
+                          stroke-width="2.2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    91.4% say a formal 5–10 year capital improvement plan is very or somewhat important.
+                  </li>
+                  <li>
+                    <span class="tick" aria-hidden="true">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="m5 12.5 4.5 4.5L19 7"
+                          stroke="currentColor"
+                          stroke-width="2.2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    The top priorities are building infrastructure (51.4%), the entrance and guardhouse (42.9%) and beach facilities (40.0%).
+                  </li>
+                  <li>
+                    <span class="tick" aria-hidden="true">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="m5 12.5 4.5 4.5L19 7"
+                          stroke="currentColor"
+                          stroke-width="2.2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    About two thirds (65.7%) are very or somewhat satisfied with the direction YARCOBR is heading; 20% are dissatisfied.
+                  </li>
+                </ul>
+                <a
+                  href="#"
+                  class="btn btn-primary"
+                  data-pdf-link
+                  hidden
+                >
+                  View full survey results
+                  <span class="arrow" aria-hidden="true">→</span>
+                </a>
+              </div>
+
+              <div class="highlight-card">
+                <div class="highlight-content">
+                  <h3 class="highlight-title">Moving within YARCOBR</h3>
+
+                  <p class="highlight-eyebrow">Say no ICC</p>
+                  <div class="big-stat">82.9%</div>
+
+                  <p class="highlight-note">
+                    The strongest agreement in the survey: 29 of 35 residents
+                    say an owner who sells and buys another YARCOBR unit as
+                    their home should not pay the ICC again.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="summary-panel reveal">
+              <div class="summary-icon">
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2 2 2 0 0 1 2-2h4.5A1.5 1.5 0 0 1 20 5.5v12a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 0 0-2 2 2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 17.5v-12ZM12 6v15"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3>What residents wrote</h3>
+                <p>
+                  21 of the 35 respondents answered the open question about the
+                  single most important issue for leadership. The most common
+                  themes were the Chickee Bar&rsquo;s food and its management,
+                  finishing current projects before starting new ones (and
+                  scheduling major work out of season), and long-term
+                  structural needs such as concrete restoration and the marina
+                  seawall.
+                </p>
+                <p>
+                  Several residents also raised the level of HOA fees,
+                  transparency about how past assessments were spent, and
+                  having owners involved in major decisions. Others asked for
+                  updated landscaping and common areas, better night lighting
+                  on walkways, and a year-round Chickee Bar. All 21 comments
+                  appear word for word in the full results PDF.
+                </p>
+                <p>
+                  The survey was voluntary and residents chose whether to take
+                  part, so these results are not a scientific sample or an
+                  official community vote.
+                </p>
+              </div>
+            </div>
+
+            <div class="actions actions-center" style="margin-top: 30px">
+              <a
+                href="#"
+                class="btn btn-primary"
+                data-pdf-link
+                hidden
+                download
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 20h16"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Download survey report (PDF)
+              </a>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-share-results
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M8.5 13.5 15 17m-6.5-6.5L15 7M12 6.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Zm0 11a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0ZM4 12a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Copy link to these results
+              </button>
+            </div>
+
+            <p class="privacy-note">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+                style="display: inline"
+              >
+                <rect
+                  x="5"
+                  y="11"
+                  width="14"
+                  height="9"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                />
+                <path
+                  d="M8 11V7a4 4 0 0 1 8 0v4"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                />
+              </svg>
+              Community Pulse gives residents an anonymous read on their own
+              community. Names, email addresses and individual response records
+              are never published, and comments are never attributed.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="band" data-edition="2026-07" hidden>
         <div class="container stack-lg">
           <div class="stat-row" data-stagger>
             <div class="stat">
@@ -392,7 +1098,7 @@
                 <a
                   href="#"
                   class="btn btn-primary"
-                  id="survey-view-link"
+                  data-pdf-link
                   hidden
                 >
                   View full survey results
@@ -482,7 +1188,7 @@
               <a
                 href="#"
                 class="btn btn-primary"
-                id="survey-download-link"
+                data-pdf-link
                 hidden
                 download
               >
@@ -506,7 +1212,7 @@
               <button
                 type="button"
                 class="btn btn-secondary"
-                id="share-results-btn"
+                data-share-results
               >
                 <svg
                   width="15"
@@ -552,7 +1258,8 @@
                 />
               </svg>
               Community Pulse gives residents an anonymous read on their own
-              community. Individual responses are never published or attributed.
+              community. Names, email addresses and individual response records
+              are never published, and comments are never attributed.
             </p>
           </div>
         </div>
@@ -567,16 +1274,73 @@
       renderHeader("pulse");
       renderFooter();
 
-      // Point the two PDF buttons at the most recent /survey/YYYY-MM.pdf.
-      // If no survey PDF has been uploaded yet, leave them hidden rather
-      // than linking to a file that doesn't exist.
+      // ---- Switching between surveys ------------------------------------
+      // Every survey's results are in the page; only one is shown at a time.
+      // ?survey=YYYY-MM picks one, so a link always opens the same survey even
+      // after newer ones are added. No (or an unknown) ?survey= shows the
+      // first link in the switcher, which is the newest survey.
+      const switchLinks = Array.from(
+        document.querySelectorAll("[data-edition-link]"),
+      );
+      const editions = switchLinks.map(function (link) {
+        return link.dataset.editionLink;
+      });
+      let current = editions[0];
+
+      function show(slug) {
+        current = editions.includes(slug) ? slug : editions[0];
+        document.querySelectorAll("[data-edition]").forEach(function (el) {
+          el.hidden = el.dataset.edition !== current;
+        });
+        switchLinks.forEach(function (link) {
+          if (link.dataset.editionLink === current) {
+            link.setAttribute("aria-current", "page");
+          } else {
+            link.removeAttribute("aria-current");
+          }
+        });
+        const label = document.querySelector(
+          '[data-edition-link="' + current + '"]',
+        ).textContent;
+        document.title =
+          "Community Pulse " +
+          label.trim().replace(/\s+/, " · ").replace(/\s+/g, " ") +
+          " — LiveYARCOBR";
+      }
+
+      function surveyFromUrl() {
+        return new URLSearchParams(window.location.search).get("survey");
+      }
+
+      switchLinks.forEach(function (link) {
+        link.addEventListener("click", function (event) {
+          // Let modified clicks open a new tab as normal.
+          if (event.metaKey || event.ctrlKey || event.shiftKey || event.button)
+            return;
+          event.preventDefault();
+          if (link.dataset.editionLink === current) return;
+          history.pushState(null, "", link.href);
+          show(link.dataset.editionLink);
+        });
+      });
+      window.addEventListener("popstate", function () {
+        show(surveyFromUrl());
+      });
+      show(surveyFromUrl());
+
+      // Point each survey's PDF buttons at its own /survey/YYYY-MM.pdf.
+      // A survey with no uploaded PDF keeps its buttons hidden rather than
+      // linking to a file that doesn't exist.
       loadSurveys().then(function (surveys) {
-        if (!surveys.length) return;
-        const latest = surveys[0];
-        ["survey-view-link", "survey-download-link"].forEach(function (id) {
-          const link = document.getElementById(id);
-          link.href = latest.pdf;
-          link.hidden = false;
+        document.querySelectorAll("section[data-edition]").forEach(function (section) {
+          const survey = surveys.find(function (s) {
+            return s.slug === section.dataset.edition;
+          });
+          if (!survey) return;
+          section.querySelectorAll("[data-pdf-link]").forEach(function (link) {
+            link.href = survey.pdf;
+            link.hidden = false;
+          });
         });
       });
 
@@ -584,11 +1348,16 @@
       // is a modal interruption for something that already succeeded — and on
       // iOS it lands on top of the page with no way to tell it apart from a
       // browser warning.
-      document
-        .getElementById("share-results-btn")
-        .addEventListener("click", function () {
+      // Always copies a link to the survey on screen, with ?survey= filled in
+      // even if the page was opened without it.
+      document.querySelectorAll("[data-share-results]").forEach(function (shareButton) {
+        shareButton.addEventListener("click", function () {
           const button = this;
-          const url = window.location.href;
+          const url =
+            window.location.origin +
+            window.location.pathname +
+            "?survey=" +
+            current;
           const original = button.innerHTML;
 
           function done(label) {
@@ -613,6 +1382,7 @@
             window.prompt("Copy this link:", url);
           }
         });
+      });
     </script>
   </body>
 </html>

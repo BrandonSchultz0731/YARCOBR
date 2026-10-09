@@ -7,8 +7,8 @@
 4. Click **Commit changes**.
 
 This is the same naming rule as the `/reports` folder. Within about a minute
-the "View Full Survey Results" and "Download Survey Report" buttons on
-`community-pulse.html` will automatically point at the new file, and the
+that survey's "View Full Survey Results" and "Download Survey Report" buttons
+on `community-pulse.html` will automatically point at the new file, and the
 Community Pulse panel on the home page will pick up the new month.
 
 **Important:** the filename must be exactly 4 digits, a dash, 2 digits, then
@@ -19,8 +19,7 @@ that isn't there.
 
 ## What this does NOT do
 
-Uploading a PDF here does **not** update the statistics, donut charts, key
-takeaways, or community summary shown on `community-pulse.html`. Those numbers are
-specific to each survey and can't be derived from a filename — whoever
-compiles the results still needs to edit them by hand in that file each
-cycle. See the comment at the top of `community-pulse.html`.
+Uploading a PDF here does **not** add the survey's results to
+`community-pulse.html`. That page keeps every survey, with a switcher between
+them, and each new survey's section is written by hand. See the comment at
+the top of `community-pulse.html` for the steps.
