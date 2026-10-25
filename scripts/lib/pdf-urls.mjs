@@ -14,8 +14,12 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
 const LIB = path.join(ROOT, "js", "vendor", "pdf.min.mjs");
 const WORKER = path.join(ROOT, "js", "vendor", "pdf.worker.min.mjs");
 
-// Stops at whitespace and at characters that cannot end a URL in prose.
-const URL_RE = /https?:\/\/[^\s<>"]+[^\s<>".,;:!?)\]]/gi;
+// Stops at whitespace and at characters that cannot end a URL in prose. Also
+// stops where another URL begins: text items are joined with no separator, so
+// a URL behind the photo and the same URL behind the button would otherwise
+// read as one long, broken URL with a box covering both.
+const URL_RE =
+  /https?:\/\/(?:(?!https?:\/\/)[^\s<>"])+(?!https?:\/\/)[^\s<>".,;:!?)\]]/gi;
 
 async function loadPdfjs() {
   // PDF.js warns at import time about canvas support it only needs for
