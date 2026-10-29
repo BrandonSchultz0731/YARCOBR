@@ -10,7 +10,7 @@ automatically. See below.
 index.html                          Home page
 market-reports.html                 Archive of all reports (auto-generated, with sort + search)
 report.html                         Individual report page — reads ?month=2026-08 from the URL
-community-pulse.html                Every survey's results, with a switcher — reads ?survey=2026-10 (see note below)
+community-pulse.html                Every survey's results, with a switcher — reads ?survey=2026-07 (see note below)
 about.html                          About Us page
 contact.html                        Contact Us page (separate from About as of this update)
 styles.css                          Every page's colors, fonts, and component styles
